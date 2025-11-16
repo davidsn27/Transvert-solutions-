@@ -2,64 +2,196 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Staff - Transvert Solutions</title>
-  <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Staff - Transvert Solutions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        header {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        nav {
+            background-color: #f8f9fa;
+            padding: 0.5rem 0;
+            margin-bottom: 2rem;
+        }
+
+        nav a {
+            margin: 0 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        th {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .btn-pendiente {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .btn-en-camino {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .btn-entregado {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem 0;
+            background-color: #343a40;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <nav>
-        <ld><a href="{% url 'home' %}" class="btn">PAGINA PRINCIPAL</a></ld>   
-        <ld><a class="logout" href="{% url 'logout' %}" aria-label="Cerrar sesión" class="btn">CERRAR SECCION </a></ld>
-      </nav>
-<header>Panel de Staff - Transvert Solutions</header>
-<table>
-    <tr>
-      <th>Número de Guía</th>
-      <th>Cliente</th>
-      <th>Descripción</th>
-      <th>Estado</th>
-      <th>Acciones</th>
-    </tr>
-    {% for envio in envios %}
-    <tr id="envio-{{ envio.id }}">
-      <td>{{ envio.numero_guia }}</td>
-      <td>{{ envio.cliente }}</td>
-      <td>{{ envio.descripcion }}</td>
-      <td class="estado">{{ envio.estado }}</td>
-      <td>
-        <button class="btn" onclick="cambiarEstado({{ envio.id }}, 'Pendiente')">Pendiente</button>
-        <button class="btn" onclick="cambiarEstado({{ envio.id }}, 'En camino')">En camino</button>
-        <button class="btn" onclick="cambiarEstado({{ envio.id }}, 'Entregado')">Entregado</button>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-  
-  <script>
-  function cambiarEstado(envioId, nuevoEstado) {
-      fetch("{% url 'actualizar_estado_envio' %}", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              "X-CSRFToken": "{{ csrf_token }}"
-          },
-          body: `envio_id=${envioId}&nuevo_estado=${nuevoEstado}`
-      })
-      .then(response => response.json())
-      .then(data => {
-          if(data.success){
-              document.querySelector(`#envio-${envioId} .estado`).textContent = data.nuevo_estado;
-          } else {
-              alert("Error al actualizar estado");
-          }
-      });
-  }
-  </script>
-  
-  </div>
-</div>
-<footer>© 2025 Transvert Solutions - Panel de Staff</footer>
+<div class="container">
+    <nav class="d-flex justify-content-between align-items-center">
+        <div>
+            <a href="{% url 'index' %}" class="btn btn-primary"><i class="fas fa-home"></i> PAGINA PRINCIPAL</a>
+        </div>
+        <div>
+            <a class="logout btn btn-danger" href="{% url 'logout' %}" aria-label="Cerrar sesión"><i
+                    class="fas fa-sign-out-alt"></i> CERRAR SESIÓN</a>
+        </div>
+    </nav>
 
+    <header>
+        <h1>Panel de Staff - Transvert Solutions</h1>
+    </header>
+
+    <!-- Barra de búsqueda -->
+    <div class="mb-3">
+        <form method="get" class="form-inline">
+            <div class="input-group">
+                <input type="text" class="form-control" name="q" placeholder="Buscar por número de guía o cliente" value="{{ request.GET.q }}">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i> Buscar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Filtros de estado -->
+    <div class="mb-3">
+        <a href="?estado=todos{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-sm btn-secondary">Todos</a>
+        <a href="?estado=Pendiente{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-sm btn-warning">Pendiente</a>
+        <a href="?estado=En camino{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-sm btn-info">En camino</a>
+        <a href="?estado=Entregado{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-sm btn-success">Entregado</a>
+        <a href="{% url 'crear_envio' %}" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Crear Envío</a>
+    </div>
+
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>Número de Guía</th>
+            <th>Cliente</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for envio in envios %}
+        <tr id="envio-{{ envio.id }}">
+            <td>{{ envio.numero_guia }}</td>
+            <td>{{ envio.cliente }}</td>
+            <td>{{ envio.descripcion }}</td>
+            <td class="estado">{{ envio.estado }}</td>
+            <td>
+                <button class="btn btn-sm btn-warning" onclick="cambiarEstado({{ envio.id }}, 'Pendiente')"><i class="fas fa-clock"></i> Pendiente</button>
+                <button class="btn btn-sm btn-info" onclick="cambiarEstado({{ envio.id }}, 'En camino')"><i class="fas fa-truck"></i> En camino</button>
+                <button class="btn btn-sm btn-success" onclick="cambiarEstado({{ envio.id }}, 'Entregado')"><i class="fas fa-check-circle"></i> Entregado</button>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Paginación -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if envios.has_previous %}
+                <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">&laquo; Primero</a>
+                <a href="?page={{ envios.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">Anterior</a>
+            {% endif %}
+
+            <span class="current">
+                Página {{ envios.number }} de {{ envios.paginator.num_pages }}.
+            </span>
+
+            {% if envios.has_next %}
+                <a href="?page={{ envios.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">Siguiente</a>
+                <a href="?page={{ envios.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">Último &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+    <script>
+        function cambiarEstado(envioId, nuevoEstado) {
+            fetch("{% url 'actualizar_estado_envio' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: `envio_id=${envioId}&nuevo_estado=${nuevoEstado}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    document.querySelector(`#envio-${envioId} .estado`).textContent = data.nuevo_estado;
+                } else {
+                    alert("Error al actualizar estado");
+                }
+            });
+        }
+    </script>
+</div>
+
+<footer>
+    © 2025 Transvert Solutions - Panel de Staff
+</footer>
 </body>
 </html>

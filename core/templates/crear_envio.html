@@ -1,23 +1,161 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Crear Envío</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Envío</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"> <!-- Reemplaza con tu archivo de estilos -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_CLAVE_API&libraries=places&callback=initAutocomplete" async defer></script>
 </head>
-<body class="bg-dark text-light">
-    <a href="{% url 'home' %}" class="home-btn">← Volver al Home</a>
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Registrar Envío</h2>
-    <form method="POST" class="card p-4 bg-secondary">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-danger w-100">Crear Envío</button>
-    </form>
-    <br>
-    {% for message in messages %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-</div>
+<body>
+    <div class="container">
+        <h1>Solicitud de Envío</h1>
+        <form id="envioForm" method="post" action="{% url 'envios:crear_envio' %}">
+            {% csrf_token %}
+
+            <h2>Información del Remitente</h2>
+            <div class="form-group">
+                <label for="remitente_nombre">Nombre:</label>
+                <input type="text" id="remitente_nombre" name="remitente_nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="remitente_telefono">Teléfono:</label>
+                <input type="tel" id="remitente_telefono" name="remitente_telefono" required>
+            </div>
+            <div class="form-group">
+                <label for="remitente_email">Email:</label>
+                <input type="email" id="remitente_email" name="remitente_email">
+            </div>
+
+            <h2>Información del Destinatario</h2>
+            <div class="form-group">
+                <label for="destinatario_nombre">Nombre:</label>
+                <input type="text" id="destinatario_nombre" name="destinatario_nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="destinatario_telefono">Teléfono:</label>
+                <input type="tel" id="destinatario_telefono" name="destinatario_telefono" required>
+            </div>
+             <div class="form-group">
+                <label for="destinatario_email">Email:</label>
+                <input type="email" id="destinatario_email" name="destinatario_email">
+            </div>
+
+            <h2>Información del Envío</h2>
+            <div class="form-group">
+                <label for="tipo_envio">Tipo de Envío:</label>
+                <select id="tipo_envio" name="tipo_envio" required>
+                    <option value="paquete">Paquete</option>
+                    <option value="documento">Documento</option>
+                    <option value="carga">Carga</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="peso">Peso (kg):</label>
+                <input type="number" id="peso" name="peso" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="dimensiones">Dimensiones (cm):</label>
+                <input type="text" id="dimensiones" name="dimensiones" placeholder="Ancho x Alto x Profundidad">
+            </div>
+
+            <h2>Direcciones</h2>
+            <div class="form-group">
+                <label for="origen">Dirección de Origen:</label>
+                <input type="text" id="origen" name="origen" placeholder="Escribe la dirección de origen" required>
+                <input type="hidden" id="direccion_origen" name="direccion_origen">
+            </div>
+            <div class="form-group">
+                <label for="destino">Dirección de Destino:</label>
+                <input type="text" id="destino" name="destino" placeholder="Escribe la dirección de destino" required>
+                <input type="hidden" id="direccion_destino" name="direccion_destino">
+            </div>
+
+            <button type="submit">Solicitar Envío</button>
+        </form>
+    </div>
+
+    <script>
+        function initAutocomplete() {
+            const origenInput = document.getElementById('origen');
+            const destinoInput = document.getElementById('destino');
+
+            const autocompleteOrigen = new google.maps.places.Autocomplete(origenInput, {
+                componentRestrictions: { country: 'CO' },
+                fields: ['address_components', 'geometry', 'name'],
+            });
+
+            const autocompleteDestino = new google.maps.places.Autocomplete(destinoInput, {
+                componentRestrictions: { country: 'CO' },
+                fields: ['address_components', 'geometry', 'name'],
+            });
+
+            autocompleteOrigen.addListener('place_changed', function() {
+                const place = autocompleteOrigen.getPlace();
+                const address = place.formatted_address;
+                const latitude = place.geometry.location.lat();
+                const longitude = place.geometry.location.lng();
+
+                fetch('/envios/guardar_direccion/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify({
+                        address: address,
+                        latitude: latitude,
+                        longitude: longitude,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Respuesta del backend:', data);
+                    document.getElementById('direccion_origen').value = data.id;
+                });
+            });
+
+            autocompleteDestino.addListener('place_changed', function() {
+                const place = autocompleteDestino.getPlace();
+                const address = place.formatted_address;
+                const latitude = place.geometry.location.lat();
+                const longitude = place.geometry.location.lng();
+
+                fetch('/envios/guardar_direccion/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify({
+                        address: address,
+                        latitude: latitude,
+                        longitude: longitude,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Respuesta del backend:', data);
+                    document.getElementById('direccion_destino').value = data.id;
+                });
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
 </body>
 </html>

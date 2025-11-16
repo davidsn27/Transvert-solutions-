@@ -44,7 +44,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'transvert_solutions.urls'
+ROOT_URLCONF = 'urls'
+WSGI_APPLICATION = 'backend.wsgi.application'
 
 TEMPLATES = [
     {
@@ -61,8 +62,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'transvert_solutions.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases

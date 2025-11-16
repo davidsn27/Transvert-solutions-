@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm
-
+from .models import Envio 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = UserCreationForm.Meta.model

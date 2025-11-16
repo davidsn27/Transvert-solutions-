@@ -12,10 +12,10 @@ from django.conf import settings
 import requests  # Para interactuar con la API de Google Maps
 
 def index(request):
-    return render(request, 'core/home.html')
+    return render(request, 'index.html')
 
 def contact(request):
-    return render(request, 'core/contact.html')
+    return render(request, 'contact.html')
 
 def register(request):
     if request.method == 'POST':
@@ -25,10 +25,10 @@ def register(request):
             messages.success(request, 'Registro exitoso. ¡Ahora puedes iniciar sesión!')
             return redirect('login')
         else:
-            return render(request, 'core/register.html', {'form': form})
+            return render(request, 'register.html', {'form': form})
     else:
         form = CustomUserCreationForm()
-    return render(request, 'core/register.html', {'form': form})
+    return render(request, 'register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -40,14 +40,14 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.info(request, f"¡Has iniciado sesión como {username}!")
-                return redirect('index')
+                return redirect('home')
             else:
                 messages.error(request, "Nombre de usuario o contraseña inválidos.")
         else:
             messages.error(request, "Nombre de usuario o contraseña inválidos.")
     else:
         form = CustomAuthenticationForm()
-    return render(request, 'core/login.html', {'form': form})
+    return render(request, 'login.html', {'form': form})
 
 def logout_view(request):
     logout(request)
@@ -55,7 +55,7 @@ def logout_view(request):
     return redirect('index')
 
 @login_required
-@user_passes_test(lambda u: u.is_staff, login_url='index')
+@user_passes_test(lambda u: u.is_staff, login_url='staff_panel')
 def staff_panel(request):
     envios = Envio.objects.all()
     estado = request.GET.get('estado')
@@ -67,7 +67,7 @@ def staff_panel(request):
     paginator = Paginator(envios, 10)  # 10 envíos por página
     page_number = request.GET.get('page')
     envios = paginator.get_page(page_number)
-    return render(request, 'core/staff_panel.html', {'envios': envios})
+    return render(request, 'staff_panel.html', {'envios': envios})
 
 @login_required
 def actualizar_estado_envio(request):
@@ -84,12 +84,12 @@ def actualizar_estado_envio(request):
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser, login_url='index')
+@user_passes_test(lambda u: u.is_superuser, login_url='superadmin_panel')
 def superadmin_panel(request):
-    return render(request, 'core/superadmin_panel.html')
+    return render(request, 'superadmin_panel.html')
 
 @login_required
-@user_passes_test(lambda u: u.is_staff, login_url='index')
+@user_passes_test(lambda u: u.is_staff, login_url='staff_panel')
 def crear_envio(request):
     if request.method == 'POST':
         form = EnvioForm(request.POST)
@@ -101,7 +101,7 @@ def crear_envio(request):
             messages.error(request, 'Por favor, corrige los errores en el formulario.')
     else:
         form = EnvioForm()
-    return render(request, 'core/crear_envio.html', {'form': form})
+    return render(request, 'crear_envio.html', {'form': form})
 
 def geocode_address(address):
     """

@@ -15,21 +15,23 @@ urlpatterns = [
 
     # URLs para la recuperación de contraseña
     path('password_reset/', auth_views.PasswordResetView.as_view(
-        template_name='core/password_reset_form.html',
+        template_name='c' \
+        'password_reset_form.html',
         form_class=views.CustomPasswordResetForm,
-        email_template_name='core/password_reset_email.html',
-        subject_template_name='core/password_reset_subject.txt',
+        email_template_name='c' \
+        'password_reset_email.html',
+        subject_template_name='password_reset_subject.txt',
         success_url='done/'
     ), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(
-        template_name='core/password_reset_done.html'
+        template_name='password_reset_done.html'
     ), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
-        template_name='core/password_reset_confirm.html',
+        template_name='password_reset_confirm.html',
         form_class=views.CustomSetPasswordForm,
         success_url='/reset/done/'
     ), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(
-        template_name='core/password_reset_complete.html'
+        template_name='password_reset_complete.html'
     ), name='password_reset_complete'),
 ]

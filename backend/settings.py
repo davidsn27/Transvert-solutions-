@@ -17,8 +17,14 @@ SECRET_KEY = 'django-insecure-tu_clave_secreta'  # ¡CAMBIA ESTO EN PRODUCCIÓN!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # ¡CAMBIA A False EN PRODUCCIÓN!
 
-ALLOWED_HOSTS = []  # Agrega tus dominios aquí en producción
-
+ALLOWED_HOSTS = [
+        '.github.dev',
+            'localhost',
+                '127.0.0.1',
+                ]
+CSRF_TRUSTED_ORIGINS = [
+                    'https://*.github.dev',
+                    ]
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,7 +50,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'transvert_solutions.urls'
+ROOT_URLCONF = 'urls'
+WSGI_APPLICATION = 'backend.wsgi.application'
 
 TEMPLATES = [
     {
@@ -57,12 +64,13 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-            ],
+            ]
+            
         },
     },
 ]
 
-WSGI_APPLICATION = 'transvert_solutions.wsgi.application'
+
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -100,12 +108,11 @@ LANGUAGE_CODE = 'es'  # Cambia al idioma que prefieras
 TIME_ZONE = 'America/Bogota'  # Cambia a tu zona horaria
 
 USE_I18N = True
-
-USE_L10N = True
+USE_L10N = True 
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files (CSS, JavaScript, Images)k
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
@@ -146,7 +153,3 @@ REST_FRAMEWORK = {
 }
 
 # Configuración de CORS
-CORS_ALLOWED_ORIGINS = [
-    "https://tu_dominio_cliente.com",
-    "http://localhost:3000",  # Ejemplo para desarrollo
-]

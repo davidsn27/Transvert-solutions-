@@ -2,18 +2,57 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contacto - Transvert Solutions</title>
-  <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - Transvert Solutions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <style>
+        /* Estilos personalizados para contact.html */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-  <div class="form-section">
-    <h2>Contáctanos</h2>
-    <p>📞 Teléfono: +57 310 000 0000</p>
-    <p>📧 Correo: soporte@transvert.com</p>
-    <p>🏢 Dirección: Bogotá, Colombia</p>
-    <a href="{% url 'home' %}" class="home-btn">← Volver al Home</a>
-  </div>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">
+                        <i class="fas fa-envelope"></i> Contáctanos
+                    </h2>
+                    <p class="card-text">
+                        <i class="fas fa-phone"></i> Teléfono: +57 310 000 0000
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-envelope"></i> Correo: soporte@transvert.com
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-map-marker-alt"></i> Dirección: Bogotá, Colombia
+                    </p>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'index' %}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Volver al Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

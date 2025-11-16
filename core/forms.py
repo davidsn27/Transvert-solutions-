@@ -1,34 +1,21 @@
 from django import forms
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import AuthenticationForm
-from .models import Envio
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm
 
-class RegistroForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
-    password2 = forms.CharField(widget=forms.PasswordInput, label="Confirmar Contraseña")
-
+class CustomUserCreationForm(UserCreationForm):
     class Meta:
-        model = User
-        fields = ['username', 'email']
+        model = UserCreationForm.Meta.model
+        fields = UserCreationForm.Meta.fields + ('first_name', 'last_name', 'email')
 
-    def clean_password2(self):
-        cd = self.cleaned_data
-        if cd.get('password') != cd.get('password2'):
-            raise forms.ValidationError('Las contraseñas no coinciden')
-        return cd.get('password2')
+class CustomAuthenticationForm(AuthenticationForm):
+    pass  # Usa el formulario de autenticación predeterminado de Django
 
-class LoginForm(AuthenticationForm):
-    username = forms.CharField(label='Usuario')
-    password = forms.CharField(widget=forms.PasswordInput, label='Contraseña')
+class CustomPasswordResetForm(PasswordResetForm):
+    pass
 
+class CustomSetPasswordForm(SetPasswordForm):
+    pass
 
 class EnvioForm(forms.ModelForm):
     class Meta:
         model = Envio
-        fields = ['cliente', 'direccion_origen', 'direccion_destino', 'descripcion']
-        widgets = {
-            'cliente': forms.TextInput(attrs={'class': 'form-control'}),
-            'direccion_origen': forms.TextInput(attrs={'class': 'form-control'}),
-            'direccion_destino': forms.TextInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-        }
+        fields = ['numero_guia', 'cliente', 'descripcion', 'estado', 'direccion_origen', 'direccion_destino']

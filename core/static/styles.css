@@ -1,0 +1,251 @@
+/* =======================================================
+   TRANSVERT SOLUTIONS - ESTILO CORPORATIVO UNIFICADO
+   ======================================================= */
+
+/* ====== PALETA DE COLORES ====== */
+:root {
+  --primary: #E63946;      /* Rojo camión */
+  --secondary: #1D3557;    /* Azul oscuro */
+  --background: #F1FAEE;   /* Gris claro */
+  --text-dark: #2B2D42;    /* Gris oscuro */
+  --success: #2ECC71;      /* Verde éxito */
+  --warning: #F77F00;      /* Naranja advertencia */
+  --white: #FFFFFF;
+}
+
+/* ====== REGLAS GLOBALES ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+/* ====== CABECERA / NAVBAR ====== */
+header {
+  background-color: var(--secondary);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 40px;
+  box-shadow: 0 3px 10px rgba(228, 117, 117, 0.2);
+}
+
+header img.logo {
+  height: 50px;
+}
+
+nav a {
+  color: var(--white);
+  margin-left: 25px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+nav a:hover {
+  color: var(--primary);
+}
+
+/* ====== BOTONES ====== */
+button,
+.btn {
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+button:hover,
+.btn:hover {
+  background-color: var(--secondary);
+  transform: scale(1.03);
+}
+
+/* ====== CONTENEDOR CENTRAL ====== */
+.container {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: var(--white);
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ====== FORMULARIOS LOGIN / REGISTRO ====== */
+.form-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 40px;
+  background-color: var(--white);
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.form-container h2 {
+  margin-bottom: 25px;
+  color: var(--secondary);
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 5px var(--primary);
+}
+
+/* ====== MENSAJES ====== */
+.alert-success {
+  color: var(--success);
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.alert-error {
+  color: var(--primary);
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+/* ====== SECCIONES DEL HOME ====== */
+.hero {
+  background: linear-gradient(
+      rgba(29, 53, 87, 0.8),
+      rgba(29, 53, 87, 0.8)
+    ),
+    url('../images/truck_banner.jpg') center/cover no-repeat;
+  color: var(--white);
+  text-align: center;
+  padding: 120px 20px;
+}
+
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  font-size: 20px;
+  margin-bottom: 25px;
+}
+
+/* ====== TESTIMONIOS Y SECCIONES ====== */
+.section {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.section h2 {
+  color: var(--secondary);
+  margin-bottom: 20px;
+}
+
+.section p {
+  max-width: 700px;
+  margin: auto;
+  font-size: 18px;
+}
+
+/* ====== PIE DE PÁGINA ====== */
+footer {
+  background-color: var(--secondary);
+  color: var(--white);
+  text-align: center;
+  padding: 25px;
+  margin-top: 50px;
+}
+
+footer a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* ====== PANEL GENERAL ====== */
+.panel {
+  background-color: var(--white);
+  border-radius: 12px;
+  padding: 25px;
+  margin: 20px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.panel h3 {
+  color: var(--secondary);
+  margin-bottom: 10px;
+}
+
+.panel .info {
+  color: var(--text-dark);
+  font-size: 15px;
+}
+
+/* ====== ANIMACIÓN DE CARGA ====== */
+.loader {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid var(--primary);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 40px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  nav a {
+    display: block;
+    margin: 10px 0;
+  }
+
+  .container {
+    padding: 20px;
+  }
+
+  .form-container {
+    width: 90%;
+    margin: 50px auto;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+  }
+}

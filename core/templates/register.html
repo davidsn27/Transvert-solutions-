@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <title>Registro - Transvert</title>
+</head>
+<body>
+  <div class="form-container">
+    <form method="POST">
+      {% csrf_token %}
+      <label>Usuario:</label>
+      <input type="text" name="username" required>
+
+      <label>Nombre:</label>
+      <input type="text" name="first_name" required>
+
+      <label>Apellido:</label>
+      <input type="text" name="last_name" required>
+
+      <label>Correo Electrónico:</label>
+      <input type="email" name="email" required>
+
+      <label>Contraseña:</label>
+      <input type="password" name="password1" required>
+
+      <label>Confirmar Contraseña:</label>
+      <input type="password" name="password2" required>
+
+      <button type="submit" class="btn">Registrarse</button>
+    </form>
+
+    <div class="links">
+      <p>¿Ya tienes cuenta?
+        <a href="{% url 'login' %}">Inicia sesión aquí</a>
+      </p>
+      <a href="{% url 'home' %}" class="back-link">← Volver al inicio</a>
+    </div>
+  </div>
+</body>
+</html>

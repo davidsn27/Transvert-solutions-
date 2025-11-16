@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seguimiento - Transvert Solutions</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+</head>
+<body>
+  <div class="center-container">
+    <div class="tracking-card">
+      <h2>Seguimiento de Envíos</h2>
+      <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="guia" placeholder="Código de guía" required>
+        <button type="submit">Consultar</button>
+      </form>
+      {% if resultado %}
+        <div class="result">
+          {% if resultado.descripcion == "No encontrado" %}
+            <div class="no-result">No encontrado. Verifica el código de guía ingresado.</div>
+          {% else %}
+            <div class="result-title">Resultado de la consulta:</div>
+            <div class="result-item"><strong>Descripción:</strong> {{ resultado.descripcion }}</div>
+            <div class="result-item"><strong>Estado:</strong> {{ resultado.estado }}</div>
+            <div class="result-item"><strong>Fecha:</strong> {{ resultado.fecha_envio }}</div>
+          {% endif %}
+        </div>
+      {% endif %}
+      <!-- Botón para volver al Home -->
+      <a href="{% url 'home' %}" class="home-btn">← Volver al Home</a>
+    </div>
+  </div>
+</body>
+</html>

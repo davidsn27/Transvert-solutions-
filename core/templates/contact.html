@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacto - Transvert Solutions</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+</head>
+<body>
+  <div class="form-section">
+    <h2>Contáctanos</h2>
+    <p>📞 Teléfono: +57 310 000 0000</p>
+    <p>📧 Correo: soporte@transvert.com</p>
+    <p>🏢 Dirección: Bogotá, Colombia</p>
+    <a href="{% url 'home' %}" class="home-btn">← Volver al Home</a>
+  </div>
+</body>
+</html>

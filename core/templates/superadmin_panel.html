@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Super Administrador - Transvert Solutions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+</head>
+<body>
+    <header role="banner">
+        <h1>🚚 Panel del Super Administrador</h1>
+        <a class="logout" href="{% url 'logout' %}" aria-label="Cerrar sesión" class="btn">Cerrar sesión</a>
+    </header>
+
+    <main class="container" role="main">
+        <!-- Mostrar mensajes del sistema -->
+        {% if messages %}
+            <div class="messages" role="alert">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <section class="panel-card" aria-labelledby="welcome-title">
+            <h2 id="welcome-title">Bienvenido, {{ user.username }}</h2>
+            <p>Desde este panel puedes supervisar todos los usuarios, administradores, productos y reportes del sistema.</p>
+        </section>
+
+        <div class="panel-card">
+            <h3>Gestión rápida</h3>
+            <div class="btn-row">
+              <a href="/admin/" class="btn">Administrar usuarios (panel Django)</a>
+              <a href="{% url 'home' %}" class="btn">Ver Home del sistema</a>
+            </div>
+          </div>
+          
+    </main>
+</body>
+</html>

@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Staff - Transvert Solutions</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+</head>
+<body>
+    <nav>
+        <ld><a href="{% url 'home' %}" class="btn">PAGINA PRINCIPAL</a></ld>   
+        <ld><a class="logout" href="{% url 'logout' %}" aria-label="Cerrar sesión" class="btn">CERRAR SECCION </a></ld>
+      </nav>
+<header>Panel de Staff - Transvert Solutions</header>
+<table>
+    <tr>
+      <th>Número de Guía</th>
+      <th>Cliente</th>
+      <th>Descripción</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    {% for envio in envios %}
+    <tr id="envio-{{ envio.id }}">
+      <td>{{ envio.numero_guia }}</td>
+      <td>{{ envio.cliente }}</td>
+      <td>{{ envio.descripcion }}</td>
+      <td class="estado">{{ envio.estado }}</td>
+      <td>
+        <button class="btn" onclick="cambiarEstado({{ envio.id }}, 'Pendiente')">Pendiente</button>
+        <button class="btn" onclick="cambiarEstado({{ envio.id }}, 'En camino')">En camino</button>
+        <button class="btn" onclick="cambiarEstado({{ envio.id }}, 'Entregado')">Entregado</button>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  
+  <script>
+  function cambiarEstado(envioId, nuevoEstado) {
+      fetch("{% url 'actualizar_estado_envio' %}", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: `envio_id=${envioId}&nuevo_estado=${nuevoEstado}`
+      })
+      .then(response => response.json())
+      .then(data => {
+          if(data.success){
+              document.querySelector(`#envio-${envioId} .estado`).textContent = data.nuevo_estado;
+          } else {
+              alert("Error al actualizar estado");
+          }
+      });
+  }
+  </script>
+  
+  </div>
+</div>
+<footer>© 2025 Transvert Solutions - Panel de Staff</footer>
+
+</body>
+</html>

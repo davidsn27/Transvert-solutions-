@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+  <title>Transvert Solutions</title>
+</head>
+<body>
+  <header>
+    <h1>🚚 TRANSVERT SOLUTIONS</h1>
+    <nav>
+      <li><a href="{% url 'login' %}" class="btn">Iniciar sesión</a></li>   
+      <li><a href="{% url 'register' %}" class="btn">Registrarse</a></li>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Conectamos Colombia con velocidad y confianza</h2>
+    <p>Tu envío, nuestro compromiso.</p>
+    <li><a href="{% url 'register' %}" class="btn">Regístrate ahora</a>
+  </section>
+
+  <main>
+    <section class="fade-in" style="padding: 30px;">
+      {% if messages %}
+        <div style="max-width:900px;margin:0 auto;">
+          {% for message in messages %}
+            <div class="card" style="margin-bottom:12px;">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% block content %}
+      <!-- Contenido específico -->
+      {% endblock %}
+    </section>
+  </main>
+
+  <footer style="text-align:center;padding:20px;margin-top:30px;color:#666;">
+    <small>© {{ year|default:"2025" }} Transvert Solutions · Bogotá, Colombia</small>
+  </footer>
+</body>
+</html>

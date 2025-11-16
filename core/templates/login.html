@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <title>Iniciar Sesión - Transvert</title>
+</head>
+<body>
+  <div class="form-container">
+    <form method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      <label for="username">Usuario:</label>
+      <input type="text" id="username" name="username" required>
+  
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" name="password" required>
+  
+      <button type="submit">Iniciar Sesión</button>
+  
+      <div class="form-links">
+        <p>¿No tienes cuenta? <a href="{% url 'register' %}">Regístrate aquí</a></p>
+        <a class="back-link" href="{% url 'index' %}">← Volver al inicio</a>
+      </div>
+    </form>
+  </div>
+  
+    </div>
+</body>
+</html>

@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <title>Home - Transvert Solutions</title>
+</head>
+<body>
+    <!-- Header con información del usuario -->
+    <header>
+        <h1>🚚 Transvert Solutions</h1>
+        <div>
+            <span>👤 Usuario: {{ user.username }}</span>
+            <a href="{% url 'logout' %}" class="btn">Cerrar Sesión</a>
+        </div>
+    </header>
+    
+    <!-- Mostrar mensajes -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Contenido principal -->
+    <main>
+        <section class="section-card">
+            <h2>¡Bienvenido a Transvert Solutions! 🎉</h2>
+            <p>
+                Nos alegra tenerte aquí. Consulta tus envíos, crea nuevos pedidos o contacta con nuestro soporte de forma sencilla y segura.
+            </p>
+        </section>
+        
+        <section class="section-card">
+            <h3>📦 Seguimiento de Envíos</h3>
+            <p>Revisa el estado actual de tus paquetes y su recorrido en tiempo real.</p>
+            <a href="{% url 'seguimiento' %}" class="btn">Ver Seguimiento</a>
+
+        </section>
+
+        <section class="section-card">
+            <h3>📦 realizar solicitud de envios</h3>
+            <p>realiza una solicitud de envio y nosotros lo realizamos con eficiencia.</p>
+            <a href="{% url 'crear_envio' %}" class="btn">envio</a>
+        </section>
+        
+        <section class="section-card">
+            <h3>🚀 Entregas Rápidas</h3>
+            <p>Nuestros profesionales garantizan entregas rápidas y seguras a nivel nacional.</p>
+            <a href="#" class="btn">Crear Envío</a>
+        </section>
+        
+        <section class="section-card">
+            <h3>💬 Soporte</h3>
+            <p>¿Tienes preguntas o reclamos? Escríbenos y te responderemos lo antes posible.</p>
+            <a href="{% url 'contact' %}" class="btn">Contacto</a>
+        </section>
+  
+        <section class="section-card">
+            <h3>Sobre Nosotros</h3>
+            <p>
+                Somos una empresa colombiana líder en servicios de transporte y logística, comprometida con la eficiencia, la seguridad y la satisfacción del cliente. Conectamos ciudades y personas, llevando cada envío con la puntualidad que mereces.
+            </p>
+        </section>
+    </main>
+</body>
+</html>

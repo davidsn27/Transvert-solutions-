@@ -2,35 +2,120 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seguimiento - Transvert Solutions</title>
-  <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguimiento - Transvert Solutions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <style>
+        /* Paleta de colores */
+        :root {
+            --primary-color: #007bff; /* Azul principal */
+            --secondary-color: #6c757d; /* Gris secundario */
+            --success-color: #28a745; /* Verde para éxito */
+            --danger-color: #dc3545; /* Rojo para error */
+            --light-color: #f8f9fa; /* Gris claro para fondos */
+            --dark-color: #343a40; /* Gris oscuro para texto */
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: darken(var(--primary-color), 10%);
+            border-color: darken(var(--primary-color), 10%);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: darken(var(--secondary-color), 10%);
+            border-color: darken(var(--secondary-color), 10%);
+        }
+
+        .alert-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .list-group-item {
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+    </style>
 </head>
 <body>
-  <div class="center-container">
-    <div class="tracking-card">
-      <h2>Seguimiento de Envíos</h2>
-      <form method="POST">
-        {% csrf_token %}
-        <input type="text" name="guia" placeholder="Código de guía" required>
-        <button type="submit">Consultar</button>
-      </form>
-      {% if resultado %}
-        <div class="result">
-          {% if resultado.descripcion == "No encontrado" %}
-            <div class="no-result">No encontrado. Verifica el código de guía ingresado.</div>
-          {% else %}
-            <div class="result-title">Resultado de la consulta:</div>
-            <div class="result-item"><strong>Descripción:</strong> {{ resultado.descripcion }}</div>
-            <div class="result-item"><strong>Estado:</strong> {{ resultado.estado }}</div>
-            <div class="result-item"><strong>Fecha:</strong> {{ resultado.fecha_envio }}</div>
-          {% endif %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">
+                        <i class="fas fa-truck"></i> Seguimiento de Envíos
+                    </h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="guia" placeholder="Código de guía" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search"></i> Consultar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    {% if resultado %}
+                        <div class="result mt-3">
+                            {% if resultado.descripcion == "No encontrado" %}
+                                <div class="alert alert-danger" role="alert">
+                                    <i class="fas fa-exclamation-triangle"></i> No encontrado. Verifica el código de guía
+                                    ingresado.
+                                </div>
+                            {% else %}
+                                <h3 class="result-title">
+                                    <i class="fas fa-info-circle"></i> Resultado de la consulta:
+                                </h3>
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <strong>Descripción:</strong> {{ resultado.descripcion }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Estado:</strong> {{ resultado.estado }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Fecha:</strong> {{ resultado.fecha_envio }}
+                                    </li>
+                                </ul>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    <a href="{% url 'home' %}" class="btn btn-secondary btn-block mt-3">
+                        <i class="fas fa-arrow-left"></i> Volver al Home
+                    </a>
+                </div>
+            </div>
         </div>
-      {% endif %}
-      <!-- Botón para volver al Home -->
-      <a href="{% url 'home' %}" class="home-btn">← Volver al Home</a>
     </div>
-  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

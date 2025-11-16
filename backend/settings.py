@@ -17,14 +17,6 @@ SECRET_KEY = 'django-insecure-tu_clave_secreta'  # ¡CAMBIA ESTO EN PRODUCCIÓN!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # ¡CAMBIA A False EN PRODUCCIÓN!
 
-ALLOWED_HOSTS = [
-        '.github.dev',
-            'localhost',
-                '127.0.0.1',
-                ]
-CSRF_TRUSTED_ORIGINS = [
-                    'https://*.github.dev',
-                    ]
 # Application definition
 
 INSTALLED_APPS = [
@@ -67,11 +59,8 @@ TEMPLATES = [
             ]
             
         },
-    },
-]
-
-
-
+    }
+}
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -151,5 +140,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
-
 # Configuración de CORS
+CORS_ALLOWED_ORIGINS = [
+    "https://tu_dominio_cliente.com",
+    "http://localhost:3000",  # Ejemplo para desarrollo
+]

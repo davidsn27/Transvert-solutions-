@@ -1,15 +1,26 @@
-import os
-from pathlib import Path
+"""
+Django settings for transvert_solutions project.
+"""
 
-# 🏗️ BASE_DIR es la ruta raíz del proyecto
+from pathlib import Path
+import os
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ⚙️ Configuración básica
-SECRET_KEY = 'django-insecure-12345-transvert-key-67890' 
-DEBUG = True
-ALLOWED_HOSTS = [] 
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# 📦 Aplicaciones instaladas
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-tu_clave_secreta'  # ¡CAMBIA ESTO EN PRODUCCIÓN!
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True  # ¡CAMBIA A False EN PRODUCCIÓN!
+
+ALLOWED_HOSTS = []  # Agrega tus dominios aquí en producción
+
+# Application definition
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -17,11 +28,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core', 
+    'rest_framework',
+    'corsheaders',
+    'core',  # Tu aplicación 'core'
 ]
 
-
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -31,47 +44,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'backend.urls'
-
-# 🧠 Configuración WSGI
-WSGI_APPLICATION = 'backend.wsgi.application'
-
-# 🗄️ Base de datos SQLite (puedes cambiar a MySQL 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-# 🔐 Validaciones de contraseñas
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
-]
-
-# 🌍 Idioma y zona horaria
-LANGUAGE_CODE = 'es-co'
-TIME_ZONE = 'America/Bogota'
-USE_I18N = True
-USE_TZ = True
-
-# 🧾 Archivos estáticos (CSS, imágenes, JS)
-
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'core', 'static'),
-]
-import os
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
+ROOT_URLCONF = 'transvert_solutions.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'core', 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Agrega la carpeta 'templates' en la raíz del proyecto
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,13 +61,92 @@ TEMPLATES = [
         },
     },
 ]
-# 📦 Archivos subidos por el usuario
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
-# 🪪 ID del campo por defecto
+WSGI_APPLICATION = 'transvert_solutions.wsgi.application'
+
+# Database
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',  # Puedes usar otro motor de base de datos (ej. PostgreSQL)
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+# Password validation
+# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+# Internationalization
+# https://docs.djangoproject.com/en/3.2/topics/i18n/
+
+LANGUAGE_CODE = 'es'  # Cambia al idioma que prefieras
+
+TIME_ZONE = 'America/Bogota'  # Cambia a tu zona horaria
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.2/howto/static-files/
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Agrega la carpeta 'static' en la raíz del proyecto
+]
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# 🔐 Configuración de autenticación
-LOGIN_URL = 'login'  
-LOGIN_REDIRECT_URL = 'home'  
-LOGOUT_REDIRECT_URL = 'index'  
+
+# Configuración de correo electrónico
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'tu_servidor_smtp.com'  # Cambia esto
+EMAIL_PORT = 587  # o 465 si usas SSL
+EMAIL_USE_TLS = True  # o EMAIL_USE_SSL = True si usas SSL
+EMAIL_HOST_USER = 'tu_correo@example.com'  # Cambia esto
+EMAIL_HOST_PASSWORD = 'tu_contraseña'  # Cambia esto
+DEFAULT_FROM_EMAIL = 'tu_correo@example.com'  # Cambia esto
+
+# Redirect URLs
+LOGIN_REDIRECT_URL = 'index'  # Redirige al 'index' después del inicio de sesión
+LOGOUT_REDIRECT_URL = 'index'  # Redirige al 'index' después del cierre de sesión
+
+# Configuración de la API de Google Maps
+GOOGLE_MAPS_API_KEY = "AIzaSyCy1sOlHHF9ygCRBvd4xEs9-ulBUZH6Lnw"  # ¡CAMBIA ESTO!
+
+# Configuración de Django REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+# Configuración de CORS
+CORS_ALLOWED_ORIGINS = [
+    "https://tu_dominio_cliente.com",
+    "http://localhost:3000",  # Ejemplo para desarrollo
+]

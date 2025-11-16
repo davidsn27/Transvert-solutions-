@@ -1,7 +1,7 @@
-from django.contrib import admin
 from django.urls import path, include
+from django.contrib import admin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('/', include('core.urls')),  # 👈 Esto hace que "/" muestre el home
+    path('', include('core.urls')),
 ]

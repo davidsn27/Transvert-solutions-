@@ -4,28 +4,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
     <title>Iniciar Sesión - Transvert</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <style>
+        /* Estilos personalizados para login.html */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-  <div class="form-container">
-    <form method="POST" action="{% url 'login' %}">
-      {% csrf_token %}
-      <label for="username">Usuario:</label>
-      <input type="text" id="username" name="username" required>
-  
-      <label for="password">Contraseña:</label>
-      <input type="password" id="password" name="password" required>
-  
-      <button type="submit">Iniciar Sesión</button>
-  
-      <div class="form-links">
-        <p>¿No tienes cuenta? <a href="{% url 'register' %}">Regístrate aquí</a></p>
-        <a class="back-link" href="{% url 'index' %}">← Volver al inicio</a>
-      </div>
-    </form>
-  </div>
-  
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                Por favor, corrige los errores a continuación.
+                            </div>
+                        {% endif %}
+                        <div class="form-group">
+                            <label for="id_username">
+                                <i class="fas fa-user"></i> Usuario:
+                            </label>
+                            {{ form.username }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_password">
+                                <i class="fas fa-lock"></i> Contraseña:
+                            </label>
+                            {{ form.password }}
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                        </button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'password_reset' %}">
+                            <i class="fas fa-question-circle"></i> ¿Olvidaste tu contraseña?
+                        </a>
+                        <p>
+                            ¿No tienes cuenta?
+                            <a href="{% url 'register' %}">Regístrate aquí</a>
+                        </p>
+                        <a href="{% url 'index' %}" class="btn btn-link">
+                            <i class="fas fa-arrow-left"></i> Volver al inicio
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

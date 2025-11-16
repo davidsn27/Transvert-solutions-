@@ -4,70 +4,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transvert Solutions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
-    <title>Home - Transvert Solutions</title>
+    <style>
+        /* Estilos personalizados para home.html */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .jumbotron {
+            background-color: #e9ecef;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 1rem 0;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <!-- Header con información del usuario -->
-    <header>
-        <h1>🚚 Transvert Solutions</h1>
-        <div>
-            <span>👤 Usuario: {{ user.username }}</span>
-            <a href="{% url 'logout' %}" class="btn">Cerrar Sesión</a>
-        </div>
-    </header>
-    
-    <!-- Mostrar mensajes -->
-    {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    
-    <!-- Contenido principal -->
-    <main>
-        <section class="section-card">
-            <h2>¡Bienvenido a Transvert Solutions! 🎉</h2>
-            <p>
-                Nos alegra tenerte aquí. Consulta tus envíos, crea nuevos pedidos o contacta con nuestro soporte de forma sencilla y segura.
-            </p>
-        </section>
-        
-        <section class="section-card">
-            <h3>📦 Seguimiento de Envíos</h3>
-            <p>Revisa el estado actual de tus paquetes y su recorrido en tiempo real.</p>
-            <a href="{% url 'seguimiento' %}" class="btn">Ver Seguimiento</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Transvert Solutions</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'index' %}">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'contact' %}">
+                    <i class="fas fa-envelope"></i> Contacto
+                </a>
+            </li>
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </li>
+                {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'staff_panel' %}">
+                            <i class="fas fa-users"></i> Panel de Staff
+                        </a>
+                    </li>
+                {% endif %}
+                {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'superadmin_panel' %}">
+                            <i class="fas fa-user-shield"></i> Panel de SuperAdmin
+                        </a>
+                    </li>
+                {% endif %}
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">
+                        <i class="fas fa-user-plus"></i> Registrarse
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
 
-        </section>
+<div class="container">
+    <div class="jumbotron">
+        <h1 class="display-4">Bienvenido a Transvert Solutions</h1>
+        <p class="lead">Tu solución logística integral.</p>
+        <hr class="my-4">
+        <p>Ofrecemos servicios de transporte y logística de alta calidad.</p>
+        <a class="btn btn-primary btn-lg" href="#" role="button">
+            <i class="fas fa-info-circle"></i> Más información
+        </a>
+    </div>
+</div>
 
-        <section class="section-card">
-            <h3>📦 realizar solicitud de envios</h3>
-            <p>realiza una solicitud de envio y nosotros lo realizamos con eficiencia.</p>
-            <a href="{% url 'crear_envio' %}" class="btn">envio</a>
-        </section>
-        
-        <section class="section-card">
-            <h3>🚀 Entregas Rápidas</h3>
-            <p>Nuestros profesionales garantizan entregas rápidas y seguras a nivel nacional.</p>
-            <a href="#" class="btn">Crear Envío</a>
-        </section>
-        
-        <section class="section-card">
-            <h3>💬 Soporte</h3>
-            <p>¿Tienes preguntas o reclamos? Escríbenos y te responderemos lo antes posible.</p>
-            <a href="{% url 'contact' %}" class="btn">Contacto</a>
-        </section>
-  
-        <section class="section-card">
-            <h3>Sobre Nosotros</h3>
-            <p>
-                Somos una empresa colombiana líder en servicios de transporte y logística, comprometida con la eficiencia, la seguridad y la satisfacción del cliente. Conectamos ciudades y personas, llevando cada envío con la puntualidad que mereces.
-            </p>
-        </section>
-    </main>
+<footer class="footer mt-auto py-3 bg-light">
+    <div class="container text-center">
+        <span class="text-muted">© 2025 Transvert Solutions</span>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

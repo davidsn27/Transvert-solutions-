@@ -1,227 +1,181 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
     <title>Home - Transvert Solutions</title>
+
     <style>
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-            url('{% static 'images/envio-seguro.jpg' %}') center/cover no-repeat;
+
+        /* --- ESTILO DEL HEADER CORPORATIVO --- */
+        .corporate-header {
+            background: #111827;
             color: white;
-            padding: 100px 0;
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
         }
 
-        .fade-in {
-            animation: fadeIn ease 2s;
-        }
-
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-            }
-
-            100% {
-                opacity: 1;
-            }
-        }
-
-        /* Estilos para el submenú de usuario */
-        .user-menu {
-            position: relative;
-            display: inline-block;
-        }
-
-        .user-menu-button {
-            background-color: #f8f9fa;
-            color: #495057;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            cursor: pointer;
-        }
-
-        .user-menu-content {
+        /* --- CONTENEDOR DEL SUBMENÚ --- */
+        .user-menu-container {
             position: absolute;
-            background-color: #f9f9f9;
-            min-width: 200px; /* Aumenta el ancho para acomodar la información */
-            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-            z-index: 1;
-            right: 0; /* Alinea el submenú a la derecha */
-            display: none; /* Oculta el submenú por defecto */
-            text-align: left; /* Alinea el texto a la izquierda */
+            top: 20px;
+            right: 20px;
+            z-index: 999;
         }
 
-        .user-menu-content a {
-            color: black;
-            padding: 0.5rem 1rem; /* Reduce el padding */
+        /* --- BOTÓN DEL MENÚ DE USUARIO --- */
+        .user-btn {
+            background: #1f2937;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid #4b5563;
+            font-size: 15px;
+        }
+
+        .user-btn:hover {
+            background: #374151;
+        }
+
+        /* --- SUBMENÚ --- */
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            margin-top: 10px;
+            background: #1f2937;
+            padding: 12px;
+            border-radius: 10px;
+            width: 220px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        .user-dropdown a {
+            display: block;
+            padding: 10px;
+            color: white;
+            border-bottom: 1px solid #374151;
             text-decoration: none;
+            font-size: 15px;
+        }
+
+        .user-dropdown a:hover {
+            background: #374151;
+        }
+
+        .user-dropdown.show {
             display: block;
         }
 
-        .user-menu-content a:hover {
-            background-color: #ddd;
+        /* --- TARJETAS DE CONTENIDO --- */
+        main {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
         }
 
-        /* Muestra el submenú cuando el botón está enfocado o el ratón está encima */
-        .user-menu:focus-within .user-menu-content {
-            display: block;
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        /* Estilos para la foto de perfil */
-        .user-profile-picture {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover; /* Asegura que la imagen se ajuste al círculo */
-        }
-
-        /* Estilos para la información del usuario */
-        .user-info {
-            padding: 1rem;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .user-info p {
-            margin-bottom: 0.5rem;
-        }
     </style>
 </head>
+
 <body>
-    <!-- Cabecera (Header) -->
-    <header class="bg-primary text-white py-3">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1>🚚 TRANSVERT SOLUTIONS</h1>
-                <div class="user-menu">
-                    <button class="user-menu-button">
-                        👤 {{ user.username }} <i class="fas fa-caret-down"></i>
-                    </button>
-                    <div class="user-menu-content">
-                        <div class="user-info">
-                            <!-- Foto de perfil (reemplaza la URL con la real) -->
-                            <img src="{% static 'images/default-profile-picture.png' %}" alt="Foto de perfil"
-                                 class="user-profile-picture">
-                            <!-- Nombre de usuario -->
-                            <p><strong>{{ user.username }}</strong></p>
-                            <!-- Dirección de correo electrónico -->
-                            <p>{{ user.email }}</p>
-                        </div>
-                        <a href="#">Mi perfil</a>
-                        <a href="#">Configuración</a>
-                        <a href="{% url 'logout' %}">Cerrar Sesión</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <!-- Mensajes (Messages) -->
-    {% if messages %}
-    <div class="container mt-3">
-        <div class="alert alert-dismissible fade show" role="alert">
-            {% for message in messages %}
-            {{ message }}
-            {% endfor %}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+    <!-- SUBMENÚ SUPERIOR -->
+    <div class="user-menu-container">
+        {% if user.is_authenticated %}
+            <!-- BOTÓN PARA USUARIOS LOGUEADOS -->
+            <button class="user-btn" onclick="toggleUserMenu()">👤 {{ user.username }}</button>
+
+            <div class="user-dropdown" id="userDropdown">
+                <a href="{% url 'seguimiento_envio' %}">📦 Seguimiento</a>
+                <a href="{% url 'crear_envio' %}">🚚 Crear Envío</a>
+                <a href="{% url 'logout' %}">🚪 Cerrar Sesión</a>
+            </div>
+
+        {% else %}
+            <!-- BOTÓN PARA VISITANTES -->
+            <button class="user-btn" onclick="toggleUserMenu()">☰ Menú</button>
+
+            <div class="user-dropdown" id="userDropdown">
+                <a href="{% url 'seguimiento_envio' %}">📦 Seguimiento</a>
+                <a href="{% url 'register' %}">📝 Registrarse</a>
+                <a href="{% url 'login' %}">🔐 Iniciar Sesión</a>
+            </div>
+        {% endif %}
     </div>
-    {% endif %}
 
-    <!-- Bienvenida (Welcome) -->
-    <section class="hero">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 offset-md-2 text-center fade-in">
-                    <h2>Gestiona tus envíos de forma fácil y segura</h2>
-                    <p class="lead">La mejor solución para tus envíos en Colombia. Ofrecemos servicios de transporte de
-                        paquetes, logística y almacenamiento con la confianza que necesitas.</p>
-                </div>
-            </div>
+    <!-- HEADER SUPERIOR -->
+    <div class="corporate-header">
+        Transvert Solutions
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main>
+        <div class="card">
+            <h2>¿Quiénes Somos?</h2>
+            <p>
+                Transvert Solutions es una empresa colombiana dedicada al transporte,
+                logística y gestión inteligente de envíos a nivel nacional. Nuestro compromiso
+                es garantizar rapidez, seguridad y una experiencia confiable para nuestros clientes.
+            </p>
         </div>
-    </section>
 
-    <!-- Tarjetas de acción (Action Cards) -->
-    <main class="container py-4">
-        <div class="row">
-            <div class="col-md-4">
-                <section class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-truck"></i> Seguimiento de Envíos</h5>
-                        <p class="card-text">Revisa el estado actual de tus paquetes y su recorrido en tiempo real.</p>
-                        <a href="{% url 'seguimiento' %}" class="btn btn-primary">Ver Seguimiento</a>
-                    </div>
-                </section>
-            </div>
+        <div class="card">
+            <h2>Misión</h2>
+            <p>
+                Brindar soluciones logísticas innovadoras que faciliten el transporte de mercancías,
+                optimizando tiempos y garantizando un servicio seguro, ágil y eficiente.
+            </p>
+        </div>
 
-            <div class="col-md-4">
-                <section class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-plus-circle"></i> Realizar solicitud de envíos</h5>
-                        <p class="card-text">Realiza una solicitud de envío y nosotros lo realizamos con eficiencia.</p>
-                        <a href="{% url 'crear_envio_api' %}" class="btn btn-success">Crear Envío</a>
-                    </div>
-                </section>
-            </div>
+        <div class="card">
+            <h2>Visión</h2>
+            <p>
+                Ser líderes nacionales en servicios de transporte y logística,
+                reconocidos por nuestra calidad, tecnología y atención al cliente,
+                proyectándonos hacia la expansión internacional.
+            </p>
+        </div>
 
-            <div class="col-md-4">
-                <section class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-question-circle"></i> Soporte</h5>
-                        <p class="card-text">¿Tienes preguntas o reclamos? Escríbenos y te responderemos lo antes posible.</p>
-                        <a href="{% url 'contact' %}" class="btn btn-info">Contacto</a>
-                    </div>
-                </section>
-            </div>
-
-            <div class="col-md-4">
-                <section class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-info-circle"></i> Sobre Nosotros</h5>
-                        <p class="card-text">Somos una empresa colombiana líder en servicios de transporte y logística.</p>
-                        <a href="{% url 'contact' %}" class="btn btn-secondary">Más información</a>
-                    </div>
-                </section>
-            </div>
+        <div class="card">
+            <h2>Valores</h2>
+            <p>
+                • Responsabilidad y cumplimiento.<br>
+                • Innovación constante.<br>
+                • Transparencia en cada proceso.<br>
+                • Servicio centrado en el cliente.<br>
+                • Compromiso con la seguridad y el bienestar.
+            </p>
         </div>
     </main>
 
-    <!-- Pie de página (Footer) -->
-    <footer class="bg-dark text-white py-4">
-        <div class="container text-center">
-            <p>© {{ year|default:"2025" }} Transvert Solutions · Bogotá, Colombia</p>
-            <a href="{% url 'contact' %}" class="text-white">Contacto</a> |
-            <a href="#" class="text-white">Términos y condiciones</a> |
-            <a href="#" class="text-white">Políticas de privacidad</a>
-        </div>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Este script es solo para el ejemplo y no es necesario para el funcionamiento del submenú
-        document.addEventListener('DOMContentLoaded', function () {
-            const userMenuButton = document.querySelector('.user-menu-button');
-            const userMenuContent = document.querySelector('.user-menu-content');
+        function toggleUserMenu() {
+            document.getElementById("userDropdown").classList.toggle("show");
+        }
 
-            // Opcional: Cerrar el menú si se hace clic fuera de él
-            document.addEventListener('click', function (event) {
-                if (!userMenuButton.contains(event.target) && !userMenuContent.contains(event.target)) {
-                    userMenuContent.style.display = 'none';
+        // Cerrar si se hace clic afuera
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-btn')) {
+                var dropdown = document.getElementById("userDropdown");
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
                 }
-            });
-        });
+            }
+        }
     </script>
+
 </body>
 </html>

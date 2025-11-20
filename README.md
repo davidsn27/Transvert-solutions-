@@ -1,2 +1,0 @@
-# Transvert-solutions-
-Proyecto 

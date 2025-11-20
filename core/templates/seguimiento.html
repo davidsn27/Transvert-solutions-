@@ -4,118 +4,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seguimiento - Transvert Solutions</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+    <title>Seguimiento de Envío - Transvert Solutions</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
     <style>
-        /* Paleta de colores */
-        :root {
-            --primary-color: #007bff; /* Azul principal */
-            --secondary-color: #6c757d; /* Gris secundario */
-            --success-color: #28a745; /* Verde para éxito */
-            --danger-color: #dc3545; /* Rojo para error */
-            --light-color: #f8f9fa; /* Gris claro para fondos */
-            --dark-color: #343a40; /* Gris oscuro para texto */
-        }
-
+        /* --- ESTILO GENERAL --- */
         body {
-            background-color: var(--light-color);
-            color: var(--dark-color);
-        }
-
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .btn-primary:hover {
-            background-color: darken(var(--primary-color), 10%);
-            border-color: darken(var(--primary-color), 10%);
-        }
-
-        .btn-secondary {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-
-        .btn-secondary:hover {
-            background-color: darken(var(--secondary-color), 10%);
-            border-color: darken(var(--secondary-color), 10%);
-        }
-
-        .alert-danger {
-            background-color: var(--danger-color);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #0a3d2c; /* verde oscuro tipo home */
             color: white;
         }
 
-        .list-group-item {
-            background-color: white;
-            border: 1px solid rgba(0, 0, 0, 0.125);
+        /* --- SUB MENÚ LATERAL --- */
+        .sidebar {
+            width: 220px;
+            background: #064a36; /* verde más oscuro */
+            position: fixed;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .sidebar h3 {
+            color: #a8e6cf; /* verde claro */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            background: #075841; /* verde medio */
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: #00c853; /* verde brillante al hover */
+            color: white;
+        }
+
+        /* --- CONTENIDO PRINCIPAL --- */
+        .main-content {
+            margin-left: 240px;
+            padding: 30px;
+        }
+
+        .card {
+            background: #087f52; /* verde más suave */
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            color: white;
+        }
+
+        h1, h2 {
+            color: #b2f2bb; /* verde claro */
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: none;
+            background: #075841;
+            color: white;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border: 1px solid #00c853;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #00c853;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #00e676;
+        }
+
+        .message-box {
+            background: #05603a;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        /* Tabla de resultados */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            color: white;
+        }
+
+        table th, table td {
+            border: 1px solid #075841;
+            padding: 12px;
+            text-align: left;
+        }
+
+        table th {
+            background: #064a36;
+        }
+
+        table td {
+            background: #087f52;
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">
-                        <i class="fas fa-truck"></i> Seguimiento de Envíos
-                    </h2>
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="guia" placeholder="Código de guía" required>
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="fas fa-search"></i> Consultar
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                    {% if resultado %}
-                        <div class="result mt-3">
-                            {% if resultado.descripcion == "No encontrado" %}
-                                <div class="alert alert-danger" role="alert">
-                                    <i class="fas fa-exclamation-triangle"></i> No encontrado. Verifica el código de guía
-                                    ingresado.
-                                </div>
-                            {% else %}
-                                <h3 class="result-title">
-                                    <i class="fas fa-info-circle"></i> Resultado de la consulta:
-                                </h3>
-                                <ul class="list-group">
-                                    <li class="list-group-item">
-                                        <strong>Descripción:</strong> {{ resultado.descripcion }}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <strong>Estado:</strong> {{ resultado.estado }}
-                                    </li>
-                                    <li class="list-group-item">
-                                        <strong>Fecha:</strong> {{ resultado.fecha_envio }}
-                                    </li>
-                                </ul>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                    <a href="{% url 'home' %}" class="btn btn-secondary btn-block mt-3">
-                        <i class="fas fa-arrow-left"></i> Volver al Home
-                    </a>
-                </div>
-            </div>
+
+    <!-- SUB MENÚ LATERAL -->
+    <div class="sidebar">
+        <h3>Transvert</h3>
+        <a href="{% url 'home' %}"><i class="fas fa-home"></i> Inicio</a>
+        <a href="{% url 'crear_envio' %}"><i class="fas fa-plus"></i> Crear Envío</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        {% endif %}
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main-content">
+        <div class="card">
+            <h1>Seguimiento de Envío</h1>
+            
+            {% if messages %}
+                {% for m in messages %}
+                    <div class="message-box">{{ m }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="{% url 'seguimiento_envio' %}">
+                {% csrf_token %}
+                <label for="numero_guia">Número de Guía:</label>
+                <input type="text" name="numero_guia" id="numero_guia" placeholder="Ingrese su número de guía..." required>
+
+                <button type="submit">Consultar</button>
+            </form>
+
+            {% if envio %}
+                <h2>Detalles del Envío</h2>
+                <table>
+                    <tr>
+                        <th>Número de Guía</th>
+                        <td>{{ envio.numero_guia }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cliente</th>
+                        <td>{{ envio.cliente }}</td>
+                    </tr>
+                    <tr>
+                        <th>Descripción</th>
+                        <td>{{ envio.descripcion }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado</th>
+                        <td>{{ envio.estado|default:"Pendiente" }}</td>
+                    </tr>
+                </table>
+            {% elif enviado_consulta %}
+                <div class="message-box">No se encontró ningún envío con ese número de guía.</div>
+            {% endif %}
         </div>
     </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>

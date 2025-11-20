@@ -5,75 +5,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Transvert</title>
+
+    <!-- Bootstrap y FontAwesome -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Tus estilos -->
     <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
+
     <style>
-        /* Estilos personalizados para login.html */
+        /* Ajuste general */
         body {
-            background-color: #f8f9fa;
+            background-color: #f4f4f4;
+        }
+
+        /* Contenedor del submenú + contenido */
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SUBMENÚ lateral */
+        .sidebar {
+            width: 250px;
+            background: #1a1a1a;
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar h3 {
+            color: #f1c40f;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            color: #fff;
+            display: block;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #333;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .content-area {
+            flex: 1;
+            padding: 40px;
         }
 
         .card {
             border: none;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">
-                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                    </h2>
-                    <form method="POST">
-                        {% csrf_token %}
-                        {% if form.errors %}
-                            <div class="alert alert-danger">
-                                Por favor, corrige los errores a continuación.
+
+<div class="main-wrapper">
+
+    <!-- SUB MENÚ LATERAL -->
+    <div class="sidebar">
+        <h3>Transvert</h3>
+        <a href="{% url 'index' %}"><i class="fas fa-home"></i> Inicio</a>
+        <a href="{% url 'register' %}"><i class="fas fa-user-plus"></i> Registrarse</a>
+        <a href="{% url 'contact' %}"><i class="fas fa-info-circle"></i> Acerca</a>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="content-area">
+
+        <div class="container">
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <h2 class="card-title text-center mb-4">
+                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                            </h2>
+
+                            <!-- ERRORES -->
+                            {% if form.errors %}
+                                <div class="alert alert-danger">
+                                    <b>Errores encontrados:</b>
+                                    <ul>
+                                        {% for field in form %}
+                                            {% if field.errors %}
+                                                <li><b>{{ field.label }}:</b> {{ field.errors|striptags }}</li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+
+                            <!-- FORMULARIO -->
+                            <form method="POST">
+                                {% csrf_token %}
+
+                                <div class="form-group">
+                                    <label><i class="fas fa-user"></i> Usuario</label>
+                                    {{ form.username }}
+                                </div>
+
+                                <div class="form-group">
+                                    <label><i class="fas fa-lock"></i> Contraseña</label>
+                                    {{ form.password }}
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fas fa-sign-in-alt"></i> Entrar
+                                </button>
+                            </form>
+
+                            <div class="text-center mt-3">
+                                <a href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
+                                <p>¿No tienes cuenta? <a href="{% url 'register' %}">Regístrate aquí</a></p>
                             </div>
-                        {% endif %}
-                        <div class="form-group">
-                            <label for="id_username">
-                                <i class="fas fa-user"></i> Usuario:
-                            </label>
-                            {{ form.username }}
+
                         </div>
-                        <div class="form-group">
-                            <label for="id_password">
-                                <i class="fas fa-lock"></i> Contraseña:
-                            </label>
-                            {{ form.password }}
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                        </button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <a href="{% url 'password_reset' %}">
-                            <i class="fas fa-question-circle"></i> ¿Olvidaste tu contraseña?
-                        </a>
-                        <p>
-                            ¿No tienes cuenta?
-                            <a href="{% url 'register' %}">Regístrate aquí</a>
-                        </p>
-                        <a href="{% url 'index' %}" class="btn btn-link">
-                            <i class="fas fa-arrow-left"></i> Volver al inicio
-                        </a>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
+
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>

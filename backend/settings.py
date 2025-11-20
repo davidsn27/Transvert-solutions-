@@ -60,7 +60,7 @@ TEMPLATES = [
             
         },
     }
-}
+]
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -104,13 +104,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)k
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+# Ruta de archivos estáticos
 STATIC_URL = '/static/'
+
+# Carpeta donde estarán tus archivos CSS, JS, imágenes
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Agrega la carpeta 'static' en la raíz del proyecto
+    BASE_DIR / "static",
 ]
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+# Opcional, para producción
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -128,7 +131,7 @@ LOGIN_REDIRECT_URL = 'index'  # Redirige al 'index' después del inicio de sesi�
 LOGOUT_REDIRECT_URL = 'index'  # Redirige al 'index' después del cierre de sesión
 
 # Configuración de la API de Google Maps
-GOOGLE_MAPS_API_KEY = "AIzaSyCy1sOlHHF9ygCRBvd4xEs9-ulBUZH6Lnw"  # ¡CAMBIA ESTO!
+GOOGLE_MAPS_API_KEY = "AIzaSyABUjqnn42gv2L6Re4eNjRj_QQHjDbwQjc"  # ¡CAMBIA ESTO!
 
 # Configuración de Django REST Framework
 REST_FRAMEWORK = {

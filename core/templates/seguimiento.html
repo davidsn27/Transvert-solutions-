@@ -9,126 +9,144 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     <style>
-        /* --- ESTILO GENERAL --- */
+        /* --- ESTILO GENERAL ADAPTADO --- */
         body {
-            font-family: Arial, sans-serif;
+            background: #1b1f27; /* Gris oscuro */
+            font-family: 'Arial', sans-serif;
+            color: #ffffff;
             margin: 0;
             padding: 0;
-            background: #0a3d2c; /* verde oscuro tipo home */
-            color: white;
         }
-
-        /* --- SUB MENÚ LATERAL --- */
+        
+        /* --- SUB MENÚ LATERAL (ADAPTADO) --- */
         .sidebar {
-            width: 220px;
-            background: #064a36; /* verde más oscuro */
+            width: 250px;
+            background: #2a2f3a; /* Gris oscuro */
+            padding: 25px;
+            height: 100vh;
             position: fixed;
-            height: 100%;
-            padding: 20px;
+            border-right: 2px solid rgba(0, 122, 204, 0.25);
         }
-
+        
         .sidebar h3 {
-            color: #a8e6cf; /* verde claro */
             text-align: center;
-            margin-bottom: 20px;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #0095FF; /* Azul suave */
         }
-
+        
         .sidebar a {
             display: block;
-            color: white;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            text-decoration: none;
-            background: #075841; /* verde medio */
-            transition: 0.3s;
-        }
-
-        .sidebar a:hover {
-            background: #00c853; /* verde brillante al hover */
-            color: white;
-        }
-
-        /* --- CONTENIDO PRINCIPAL --- */
-        .main-content {
-            margin-left: 240px;
-            padding: 30px;
-        }
-
-        .card {
-            background: #087f52; /* verde más suave */
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            color: white;
-        }
-
-        h1, h2 {
-            color: #b2f2bb; /* verde claro */
-        }
-
-        input {
-            width: 100%;
             padding: 12px;
-            border-radius: 6px;
-            border: none;
-            background: #075841;
-            color: white;
-            margin-bottom: 15px;
-            font-size: 14px;
+            margin-bottom: 12px;
+            background: #3a404d; /* Gris profesional */
+            color: #ffffff;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s ease;
+            border-left: 4px solid transparent;
         }
-
-        input:focus {
-            border: 1px solid #00c853;
-            outline: none;
+        
+        .sidebar a:hover {
+            background: #0095FF;
+            color: #fff;
+            border-left: 4px solid #fff;
         }
-
-        button {
+        
+        /* --- CONTENIDO PRINCIPAL ADAPTADO --- */
+        .main-content {
+            margin-left: 270px;
+            padding: 40px;
+        }
+        
+        /* --- TARJETA PRINCIPAL ADAPTADA --- */
+        .card {
+            background: #f2f2f2;  /* Gris claro */
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.3);
+            color: #000;
+        }
+        
+        .card h1, .card h2 {
+            color: #007ACC; /* Azul profesional */
+            font-weight: bold;
+        }
+        
+        /* --- INPUTS, FOCUS Y SELECT ADAPTADOS --- */
+        input, select {
             width: 100%;
             padding: 14px;
-            background: #00c853;
-            border: none;
-            border-radius: 6px;
+            border-radius: 10px;
+            border: 2px solid #cfcfcf;
+            background: #ffffff;
+            margin-bottom: 18px;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #0095FF;
+            background: #ffffff;
+            box-shadow: 0 0 6px rgba(0,149,255,0.6);
+        }
+        
+        /* --- BOTÓN ADAPTADO --- */
+        button {
+            background: linear-gradient(90deg, #007ACC, #0095FF);
             color: white;
-            font-size: 16px;
+            padding: 14px;
+            font-size: 18px;
+            width: 100%;
+            border-radius: 10px;
+            border: none;
             cursor: pointer;
+            font-weight: bold;
             transition: 0.3s;
         }
-
+        
         button:hover {
-            background: #00e676;
+            background: linear-gradient(90deg, #0095FF, #5BB8FF);
+            transform: scale(1.02);
         }
-
+        
+        /* --- MENSAJES ADAPTADOS --- */
         .message-box {
-            background: #05603a;
-            padding: 10px;
-            border-radius: 5px;
+            background: #3a404d;
+            padding: 12px;
+            border-left: 4px solid #0095FF;
+            border-radius: 8px;
             margin-bottom: 15px;
-            color: white;
+            color: #fff;
+            font-weight: bold;
         }
-
-        /* Tabla de resultados */
+        
+        /* --- TABLAS ADAPTADAS --- */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            color: white;
+            color: #000;
         }
-
+        
         table th, table td {
-            border: 1px solid #075841;
-            padding: 12px;
+            padding: 14px;
             text-align: left;
+            border: 1px solid #cfcfcf;
         }
-
+        
         table th {
-            background: #064a36;
+            background: #d9eaff; /* azul muy claro */
+            font-weight: bold;
+            color: #003a70;
         }
-
+        
         table td {
-            background: #087f52;
+            background: #ffffff;
         }
+        
     </style>
 </head>
 
@@ -155,7 +173,8 @@
                 {% endfor %}
             {% endif %}
 
-            <form method="post" action="{% url 'seguimiento_envio' %}">
+            <form method="get" action="{% url 'seguimiento_envio' %}">
+
                 {% csrf_token %}
                 <label for="numero_guia">Número de Guía:</label>
                 <input type="text" name="numero_guia" id="numero_guia" placeholder="Ingrese su número de guía..." required>
@@ -164,25 +183,29 @@
             </form>
 
             {% if envio %}
-                <h2>Detalles del Envío</h2>
-                <table>
-                    <tr>
-                        <th>Número de Guía</th>
-                        <td>{{ envio.numero_guia }}</td>
-                    </tr>
-                    <tr>
-                        <th>Cliente</th>
-                        <td>{{ envio.cliente }}</td>
-                    </tr>
-                    <tr>
-                        <th>Descripción</th>
-                        <td>{{ envio.descripcion }}</td>
-                    </tr>
-                    <tr>
-                        <th>Estado</th>
-                        <td>{{ envio.estado|default:"Pendiente" }}</td>
-                    </tr>
-                </table>
+            <h2>Detalles del Envío</h2>
+            <table>
+            
+                <tr><th>Número de Guía</th><td>{{ envio.numero_guia }}</td></tr>
+            
+                <tr><th>Remitente</th><td>{{ envio.remitente_nombre }} - {{ envio.remitente_telefono }} - {{ envio.remitente_email }}</td></tr>
+            
+                <tr><th>Destinatario</th><td>{{ envio.destinatario_nombre }} - {{ envio.destinatario_telefono }} - {{ envio.destinatario_email }}</td></tr>
+            
+                <tr><th>Tipo de Envío</th><td>{{ envio.tipo_envio }}</td></tr>
+            
+                <tr><th>Peso</th><td>{{ envio.peso }} kg</td></tr>
+            
+                <tr><th>Dimensiones</th><td>{{ envio.dimensiones }}</td></tr>
+            
+                <tr><th>Origen</th><td>{{ envio.direccion_origen }}</td></tr>
+            
+                <tr><th>Destino</th><td>{{ envio.direccion_destino }}</td></tr>
+            
+                <tr><th>Estado</th><td>{{ envio.estado }}</td></tr>
+            
+            </table>
+            
             {% elif enviado_consulta %}
                 <div class="message-box">No se encontró ningún envío con ese número de guía.</div>
             {% endif %}

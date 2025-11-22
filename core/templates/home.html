@@ -8,39 +8,64 @@
     <title>Home - Transvert Solutions</title>
 
     <style>
-
-        /* --- ESTILO DEL HEADER CORPORATIVO --- */
+        /* --- HEADER SUPERIOR MÁS GRANDE --- */
         .corporate-header {
             background: #111827;
             color: white;
-            padding: 20px;
+            padding: 30px;        /* más alto */
             text-align: center;
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 36px;      /* más grande */
+            font-weight: 800;
+            letter-spacing: 1px;
         }
+        
 
-        /* --- CONTENEDOR DEL SUBMENÚ --- */
+        /* --- CONTENEDOR DEL SUBMENÚ (ALINEADO CON EL HEADER) --- */
         .user-menu-container {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 32px;          /* Alinea visualmente con el header de 30px */
+            right: 30px;
             z-index: 999;
         }
-
-        /* --- BOTÓN DEL MENÚ DE USUARIO --- */
+        
+        /* --- BOTÓN DEL MENÚ DE USUARIO (AGRANDADO) --- */
         .user-btn {
             background: #1f2937;
             color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
+            padding: 14px 26px;         /* más grande */
+            border-radius: 10px;
             cursor: pointer;
             border: 1px solid #4b5563;
-            font-size: 15px;
+            font-size: 18px;            /* letra más grande */
+            font-weight: bold;
         }
-
-        .user-btn:hover {
+        
+        /* --- SUBMENÚ DESPLEGABLE (AGRANDADO Y ALINEADO) --- */
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            margin-top: 12px;
+            background: #1f2937;
+            padding: 18px;
+            border-radius: 12px;
+            width: 260px;               /* más ancho */
+            box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+        }
+        
+        .user-dropdown a {
+            display: block;
+            padding: 14px;
+            color: white;
+            border-bottom: 1px solid #374151;
+            text-decoration: none;
+            font-size: 17px;
+        }
+        
+        .user-dropdown a:hover {
             background: #374151;
         }
+        
 
         /* --- SUBMENÚ --- */
         .user-dropdown {
@@ -48,7 +73,7 @@
             position: absolute;
             right: 0;
             margin-top: 10px;
-            background: #1f2937;
+            background: #1e293b;
             padding: 12px;
             border-radius: 10px;
             width: 220px;
@@ -59,32 +84,90 @@
             display: block;
             padding: 10px;
             color: white;
-            border-bottom: 1px solid #374151;
+            border-bottom: 1px solid #334155;
             text-decoration: none;
             font-size: 15px;
         }
 
         .user-dropdown a:hover {
-            background: #374151;
+            background: #334155;
         }
 
         .user-dropdown.show {
             display: block;
         }
-
-        /* --- TARJETAS DE CONTENIDO --- */
         main {
-            max-width: 900px;
-            margin: 30px auto;
+            max-width: 1400px;
+            margin: 40px auto;
             padding: 20px;
+    
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 35px;
+        }
+    
+        /* TARJETAS GRANDES CON TEXTO CENTRADO */
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            min-height: 300px; /* más grandes */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-left: 8px solid #3b82f6;
+    
+            text-align: center; /* <<< TEXTO CENTRADO */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    
+        /* TÍTULOS MÁS GRANDES */
+        .card h2 {
+            color: #1e3a8a;
+            font-size: 28px; /* <<< MÁS GRANDE */
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+    
+        /* PÁRRAFOS MÁS GRANDES Y LEGIBLES */
+        .card p {
+            font-size: 20px; /* <<< MÁS GRANDE */
+            line-height: 1.7;
+            color: #111827;
+            max-width: 90%;
+            margin: 0 auto;
+        }
+    
+        /* RESPONSIVE PARA CELULAR */
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                min-height: auto;
+                padding: 25px;
+            }
         }
 
+        /* --- TARJETAS --- */
         .card {
-            background: rgb(255, 255, 255);
+            background: white;
             padding: 20px;
             border-radius: 12px;
-            margin-bottom: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 6px solid #3b82f6; /* azul destacado */
+        }
+
+        .card h2 {
+            color: #1e3a8a; /* azul */
+            margin-top: 0;
+        }
+
+        /* RESPONSIVE: una columna en celulares */
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+            }
         }
 
     </style>
@@ -95,7 +178,6 @@
     <!-- SUBMENÚ SUPERIOR -->
     <div class="user-menu-container">
         {% if user.is_authenticated %}
-            <!-- BOTÓN PARA USUARIOS LOGUEADOS -->
             <button class="user-btn" onclick="toggleUserMenu()">👤 {{ user.username }}</button>
 
             <div class="user-dropdown" id="userDropdown">
@@ -105,7 +187,6 @@
             </div>
 
         {% else %}
-            <!-- BOTÓN PARA VISITANTES -->
             <button class="user-btn" onclick="toggleUserMenu()">☰ Menú</button>
 
             <div class="user-dropdown" id="userDropdown">
@@ -121,22 +202,21 @@
         Transvert Solutions
     </div>
 
-    <!-- CONTENIDO PRINCIPAL -->
+    <!-- CONTENIDO PRINCIPAL CON TARJETAS 2x2 -->
     <main>
         <div class="card">
             <h2>¿Quiénes Somos?</h2>
             <p>
                 Transvert Solutions es una empresa colombiana dedicada al transporte,
-                logística y gestión inteligente de envíos a nivel nacional. Nuestro compromiso
-                es garantizar rapidez, seguridad y una experiencia confiable para nuestros clientes.
+                logística y gestión inteligente de envíos a nivel nacional.
             </p>
         </div>
 
         <div class="card">
             <h2>Misión</h2>
             <p>
-                Brindar soluciones logísticas innovadoras que faciliten el transporte de mercancías,
-                optimizando tiempos y garantizando un servicio seguro, ágil y eficiente.
+                Brindar soluciones logísticas innovadoras que optimicen tiempos y
+                garanticen un servicio seguro y eficiente.
             </p>
         </div>
 
@@ -144,19 +224,18 @@
             <h2>Visión</h2>
             <p>
                 Ser líderes nacionales en servicios de transporte y logística,
-                reconocidos por nuestra calidad, tecnología y atención al cliente,
-                proyectándonos hacia la expansión internacional.
+                reconocidos por nuestra calidad y tecnología.
             </p>
         </div>
 
         <div class="card">
             <h2>Valores</h2>
             <p>
-                • Responsabilidad y cumplimiento.<br>
-                • Innovación constante.<br>
-                • Transparencia en cada proceso.<br>
-                • Servicio centrado en el cliente.<br>
-                • Compromiso con la seguridad y el bienestar.
+                • Responsabilidad<br>
+                • Innovación<br>
+                • Transparencia<br>
+                • Servicio al cliente<br>
+                • Seguridad
             </p>
         </div>
     </main>
@@ -166,7 +245,6 @@
             document.getElementById("userDropdown").classList.toggle("show");
         }
 
-        // Cerrar si se hace clic afuera
         window.onclick = function(event) {
             if (!event.target.matches('.user-btn')) {
                 var dropdown = document.getElementById("userDropdown");

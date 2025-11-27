@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Soporte Técnico - Transvert Solutions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body { background: #1b1f27; font-family: Arial, sans-serif; color: white; margin: 0; }
+        .main-wrapper { display: flex; min-height: 100vh; flex-direction: row; }
+        .sidebar { width: 250px; background: #2a2f3a; padding: 25px; border-left: 2px solid rgba(0, 122, 204, 0.25); order: 2; }
+        .sidebar h3 { text-align: center; font-size: 26px; font-weight: bold; margin-bottom: 30px; color: #0095FF; }
+        .sidebar a { display: block; padding: 12px; margin-bottom: 12px; background: #3a404d; color: #ffffff; border-radius: 8px; text-decoration: none; font-size: 16px; transition: 0.3s ease; border-left: 4px solid transparent; }
+        .sidebar a i { margin-right: 8px; }
+        .sidebar a:hover { background: #0095FF; color: #fff; border-left: 4px solid #fff; }
+        .content-area { flex: 1; padding: 40px; order: 1; }
+        .card { background: #f2f2f2; border-radius: 20px; padding: 40px; box-shadow: 0 0 25px rgba(0,0,0,0.3); color: black; }
+        .card h1 { font-size: 32px; font-weight: bold; color: #007ACC; margin-bottom: 30px; text-align: center; }
+        .section-title { margin-top: 30px; font-size: 22px; border-left: 5px solid #0095FF; padding-left: 10px; margin-bottom: 15px; color: #222; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #cfcfcf; background: white; margin-bottom: 18px; font-size: 15px; resize: none; }
+        input:focus, select:focus, textarea:focus { border-color: #0095FF; box-shadow: 0 0 6px rgba(0,149,255,0.6); outline: none; }
+        button { background: linear-gradient(90deg, #007ACC, #0095FF); color: white; padding: 14px; font-size: 18px; width: 100%; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: linear-gradient(90deg, #0095FF, #5BB8FF); transform: scale(1.02); }
+        .mensaje-ok { background: #0095FF; padding: 12px; border-radius: 8px; color: white; margin-top: 15px; text-align: center; font-weight: bold; }
+    </style>
+</head>
+
+<body>
+<div class="main-wrapper">
+
+    <div class="content-area">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="card">
+                        <h1><i class="fas fa-headset"></i> Soporte Técnico</h1>
+
+                        <form id="soporteForm">
+                            {% csrf_token %}
+                            <div class="section-title">Información del Ticket</div>
+                            <input type="text" id="asunto" placeholder="Asunto del problema" required>
+
+                            <select id="prioridad">
+                                <option value="Baja">Prioridad Baja</option>
+                                <option value="Media" selected>Prioridad Media</option>
+                                <option value="Alta">Prioridad Alta</option>
+                            </select>
+
+                            <textarea id="descripcion" rows="5" placeholder="Describe detalladamente tu problema..." required></textarea>
+
+                            <button type="submit">
+                                <i class="fas fa-paper-plane"></i> Enviar Ticket
+                            </button>
+                        </form>
+
+                        <div id="respuesta"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <h3>Transvert</h3>
+        <a href="{% url 'home' %}"><i class="fas fa-home"></i> Inicio</a>
+        <a href="{% url 'seguimiento_envio' %}"><i class="fas fa-box"></i> Seguimiento</a>
+        <a href="{% url 'crear_envio' %}"><i class="fas fa-plus-circle"></i> Crear Envío</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        {% else %}
+            <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+            <a href="{% url 'register' %}"><i class="fas fa-user-plus"></i> Registrarse</a>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+document.getElementById("soporteForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const btn = this.querySelector("button");
+    btn.disabled = true;
+
+    fetch("{% url 'crear_ticket' %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            asunto: document.getElementById("asunto").value,
+            prioridad: document.getElementById("prioridad").value,
+            descripcion: document.getElementById("descripcion").value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("respuesta").innerHTML =
+            `<div class="mensaje-ok">${data.mensaje}</div>`;
+        document.getElementById("soporteForm").reset();
+        btn.disabled = false;
+    })
+    .catch(err => {
+        document.getElementById("respuesta").innerHTML =
+            `<div class="mensaje-ok">❌ Error al enviar ticket</div>`;
+        btn.disabled = false;
+    });
+});
+</script>
+</body>
+</html>

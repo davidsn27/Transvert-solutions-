@@ -3,44 +3,48 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seguimiento de Envío - Transvert Solutions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- ✅ FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        /* --- ESTILO GENERAL ADAPTADO --- */
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: row-reverse;
+        }
+
         body {
-            background: #1b1f27; /* Gris oscuro */
-            font-family: 'Arial', sans-serif;
+            background: #1b1f27;
+            font-family: Arial, sans-serif;
             color: #ffffff;
             margin: 0;
             padding: 0;
         }
-        
-        /* --- SUB MENÚ LATERAL (ADAPTADO) --- */
+
         .sidebar {
             width: 250px;
-            background: #2a2f3a; /* Gris oscuro */
+            background: #2a2f3a;
             padding: 25px;
             height: 100vh;
-            position: fixed;
-            border-right: 2px solid rgba(0, 122, 204, 0.25);
+            border-left: 2px solid rgba(0, 122, 204, 0.25);
         }
-        
+
         .sidebar h3 {
             text-align: center;
             font-size: 26px;
             font-weight: bold;
             margin-bottom: 30px;
-            color: #0095FF; /* Azul suave */
+            color: #0095FF;
         }
-        
+
         .sidebar a {
             display: block;
             padding: 12px;
             margin-bottom: 12px;
-            background: #3a404d; /* Gris profesional */
+            background: #3a404d;
             color: #ffffff;
             border-radius: 8px;
             text-decoration: none;
@@ -48,52 +52,44 @@
             transition: 0.3s ease;
             border-left: 4px solid transparent;
         }
-        
+
+        .sidebar a i {
+            margin-right: 8px;
+        }
+
         .sidebar a:hover {
             background: #0095FF;
             color: #fff;
             border-left: 4px solid #fff;
         }
-        
-        /* --- CONTENIDO PRINCIPAL ADAPTADO --- */
+
         .main-content {
-            margin-left: 270px;
+            flex: 1;
             padding: 40px;
         }
-        
-        /* --- TARJETA PRINCIPAL ADAPTADA --- */
+
         .card {
-            background: #f2f2f2;  /* Gris claro */
+            background: #f2f2f2;
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 0 25px rgba(0,0,0,0.3);
             color: #000;
         }
-        
+
         .card h1, .card h2 {
-            color: #007ACC; /* Azul profesional */
+            color: #007ACC;
             font-weight: bold;
         }
-        
-        /* --- INPUTS, FOCUS Y SELECT ADAPTADOS --- */
-        input, select {
+
+        input {
             width: 100%;
             padding: 14px;
             border-radius: 10px;
             border: 2px solid #cfcfcf;
-            background: #ffffff;
             margin-bottom: 18px;
             font-size: 15px;
-            transition: 0.2s;
         }
-        
-        input:focus, select:focus {
-            border-color: #0095FF;
-            background: #ffffff;
-            box-shadow: 0 0 6px rgba(0,149,255,0.6);
-        }
-        
-        /* --- BOTÓN ADAPTADO --- */
+
         button {
             background: linear-gradient(90deg, #007ACC, #0095FF);
             color: white;
@@ -104,113 +100,101 @@
             border: none;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.3s;
         }
-        
-        button:hover {
-            background: linear-gradient(90deg, #0095FF, #5BB8FF);
-            transform: scale(1.02);
-        }
-        
-        /* --- MENSAJES ADAPTADOS --- */
-        .message-box {
-            background: #3a404d;
-            padding: 12px;
-            border-left: 4px solid #0095FF;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            color: #fff;
-            font-weight: bold;
-        }
-        
-        /* --- TABLAS ADAPTADAS --- */
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
             color: #000;
         }
-        
+
         table th, table td {
             padding: 14px;
-            text-align: left;
             border: 1px solid #cfcfcf;
         }
-        
+
         table th {
-            background: #d9eaff; /* azul muy claro */
+            background: #d9eaff;
             font-weight: bold;
             color: #003a70;
         }
-        
-        table td {
-            background: #ffffff;
-        }
-        
     </style>
 </head>
 
 <body>
 
-    <!-- SUB MENÚ LATERAL -->
+<div class="main-wrapper">
+
+    <!-- ✅ SIDEBAR -->
     <div class="sidebar">
         <h3>Transvert</h3>
-        <a href="{% url 'home' %}"><i class="fas fa-home"></i> Inicio</a>
-        <a href="{% url 'crear_envio' %}"><i class="fas fa-plus"></i> Crear Envío</a>
+
+        <a href="{% url 'home' %}">
+            <i class="fas fa-home"></i> Inicio
+        </a>
+
+        <a href="{% url 'crear_envio' %}">
+            <i class="fas fa-plus-circle"></i> Crear Envío
+        </a>
+
+        <a href="/soporte/">
+            <i class="fas fa-headset"></i> Soporte
+        </a>
+
         {% if user.is_authenticated %}
-            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            <a href="{% url 'logout' %}">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
         {% endif %}
     </div>
 
-    <!-- CONTENIDO PRINCIPAL -->
+    <!-- ✅ CONTENIDO -->
     <div class="main-content">
         <div class="card">
-            <h1>Seguimiento de Envío</h1>
-            
-            {% if messages %}
-                {% for m in messages %}
-                    <div class="message-box">{{ m }}</div>
-                {% endfor %}
-            {% endif %}
+
+            <h1><i class="fas fa-search-location"></i> Seguimiento de Envío</h1>
 
             <form method="get" action="{% url 'seguimiento_envio' %}">
-
-                {% csrf_token %}
-                <label for="numero_guia">Número de Guía:</label>
-                <input type="text" name="numero_guia" id="numero_guia" placeholder="Ingrese su número de guía..." required>
-
-                <button type="submit">Consultar</button>
+                <label><b>Número de Guía:</b></label>
+                <input type="text" name="numero_guia" required>
+                <button type="submit">
+                    <i class="fas fa-magnifying-glass"></i> Consultar
+                </button>
             </form>
 
             {% if envio %}
-            <h2>Detalles del Envío</h2>
-            <table>
-            
-                <tr><th>Número de Guía</th><td>{{ envio.numero_guia }}</td></tr>
-            
-                <tr><th>Remitente</th><td>{{ envio.remitente_nombre }} - {{ envio.remitente_telefono }} - {{ envio.remitente_email }}</td></tr>
-            
-                <tr><th>Destinatario</th><td>{{ envio.destinatario_nombre }} - {{ envio.destinatario_telefono }} - {{ envio.destinatario_email }}</td></tr>
-            
-                <tr><th>Tipo de Envío</th><td>{{ envio.tipo_envio }}</td></tr>
-            
-                <tr><th>Peso</th><td>{{ envio.peso }} kg</td></tr>
-            
-                <tr><th>Dimensiones</th><td>{{ envio.dimensiones }}</td></tr>
-            
-                <tr><th>Origen</th><td>{{ envio.direccion_origen }}</td></tr>
-            
-                <tr><th>Destino</th><td>{{ envio.direccion_destino }}</td></tr>
-            
-                <tr><th>Estado</th><td>{{ envio.estado }}</td></tr>
-            
-            </table>
-            
-            {% elif enviado_consulta %}
-                <div class="message-box">No se encontró ningún envío con ese número de guía.</div>
+                <h2><i class="fas fa-box-open"></i> Detalles del Envío</h2>
+
+                <table>
+                    <tr><th>Número</th><td>{{ envio.numero_guia }}</td></tr>
+                    <tr><th>Remitente</th><td>{{ envio.remitente_nombre }}</td></tr>
+                    <tr><th>Destinatario</th><td>{{ envio.destinatario_nombre }}</td></tr>
+                    <tr><th>Tipo</th><td>{{ envio.tipo_envio }}</td></tr>
+                    <tr><th>Peso</th><td>{{ envio.peso }}</td></tr>
+                    <tr><th>Dimensiones</th><td>{{ envio.dimensiones }}</td></tr>
+                    <tr><th>Origen</th><td>{{ envio.direccion_origen }}</td></tr>
+                    <tr><th>Destino</th><td>{{ envio.direccion_destino }}</td></tr>
+                    <tr><th>Estado</th><td>{{ envio.estado }}</td></tr>
+                </table>
+
+                <!-- ✅ DESCARGA DE ETIQUETA SOLO SI EXISTE -->
+                {% if envio %}
+                <a href="{% url 'descargar_guia_pdf' envio.id %}" 
+                   style="margin-top:12px;display:inline-block;padding:12px 18px;
+                          background:#28a745;color:white;border-radius:8px;
+                          font-weight:bold;text-decoration:none;">
+                   📄 Descargar etiqueta en PDF
+                </a>
+                {% endif %}
+                
+
             {% endif %}
+
         </div>
     </div>
+
+</div>
 
 </body>
 </html>

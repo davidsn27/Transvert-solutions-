@@ -3,33 +3,34 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solicitud de Envío - Transvert Solutions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-    <!-- Iconos -->
+    <!-- FontAwesome Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         body {
-            background: #1b1f27; /* Gris oscuro */
-            font-family: 'Arial', sans-serif;
-            color: #ffffff;
+            background: #1b1f27;
+            font-family: Arial, sans-serif;
+            color: white;
         }
 
         .main-wrapper {
             display: flex;
             min-height: 100vh;
+            flex-direction: row-reverse;
         }
 
         /* SIDEBAR */
         .sidebar {
             width: 250px;
-            background: #2a2f3a; /* Gris más oscuro */
+            background: #2a2f3a;
             padding: 25px;
-            border-right: 2px solid rgba(0, 122, 204, 0.25);
+            border-left: 2px solid rgba(0, 122, 204, 0.25);
         }
 
         .sidebar h3 {
@@ -37,20 +38,24 @@
             font-size: 26px;
             font-weight: bold;
             margin-bottom: 30px;
-            color: #0095FF; /* Azul suave */
+            color: #0095FF;
         }
 
         .sidebar a {
             display: block;
             padding: 12px;
             margin-bottom: 12px;
-            background: #3a404d; /* Gris profesional */
+            background: #3a404d;
             color: #ffffff;
             border-radius: 8px;
             text-decoration: none;
             font-size: 16px;
             transition: 0.3s ease;
             border-left: 4px solid transparent;
+        }
+
+        .sidebar a i {
+            margin-right: 8px;
         }
 
         .sidebar a:hover {
@@ -66,17 +71,17 @@
         }
 
         .card {
-            background: #f2f2f2;  /* Gris claro */
+            background: #f2f2f2;
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 0 25px rgba(0,0,0,0.3);
-            color: #000;
+            color: black;
         }
 
         .card h1 {
             font-size: 32px;
             font-weight: bold;
-            color: #007ACC; /* Azul principal */
+            color: #007ACC;
             margin-bottom: 30px;
         }
 
@@ -95,16 +100,15 @@
             padding: 14px;
             border-radius: 10px;
             border: 2px solid #cfcfcf;
-            background: #ffffff;
+            background: white;
             margin-bottom: 18px;
             font-size: 15px;
-            transition: 0.2s;
         }
 
         input:focus, select:focus {
             border-color: #0095FF;
-            background: #ffffff;
             box-shadow: 0 0 6px rgba(0,149,255,0.6);
+            outline: none;
         }
 
         button {
@@ -131,10 +135,9 @@
             border-left: 4px solid #0095FF;
             border-radius: 8px;
             margin-bottom: 15px;
-            color: #fff;
+            color: white;
             font-weight: bold;
         }
-
     </style>
 </head>
 
@@ -148,6 +151,7 @@
 
         <a href="{% url 'home' %}"><i class="fas fa-home"></i> Inicio</a>
         <a href="{% url 'seguimiento_envio' %}"><i class="fas fa-box"></i> Seguimiento</a>
+        <a href="/soporte/"><i class="fas fa-headset"></i> Soporte</a>
 
         {% if user.is_authenticated %}
             <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
@@ -175,22 +179,19 @@
                             {% endfor %}
                         {% endif %}
 
-                        <form id="envioForm" method="post" action="{% url 'crear_envio' %}">
+                        <form method="post" action="{% url 'crear_envio' %}">
                             {% csrf_token %}
 
-                            <!-- REMITENTE -->
                             <div class="section-title">Información del Remitente</div>
                             <input type="text" name="remitente_nombre" placeholder="Nombre completo" required>
                             <input type="tel" name="remitente_telefono" placeholder="Teléfono" required>
                             <input type="email" name="remitente_email" placeholder="Correo electrónico">
 
-                            <!-- DESTINATARIO -->
                             <div class="section-title">Información del Destinatario</div>
                             <input type="text" name="destinatario_nombre" placeholder="Nombre completo" required>
                             <input type="tel" name="destinatario_telefono" placeholder="Teléfono" required>
                             <input type="email" name="destinatario_email" placeholder="Correo electrónico">
 
-                            <!-- ENVÍO -->
                             <div class="section-title">Información del Envío</div>
                             <select name="tipo_envio" required>
                                 <option value="">Seleccione el tipo de envío</option>
@@ -200,9 +201,8 @@
                             </select>
 
                             <input type="number" name="peso" step="0.01" placeholder="Peso (kg)" required>
-                            <input type="text" name="dimensiones" placeholder="Dimensiones (Ancho x Alto x Profundidad)">
+                            <input type="text" name="dimensiones" placeholder="Dimensiones">
 
-                            <!-- DIRECCIONES -->
                             <div class="section-title">Direcciones</div>
                             <input type="text" id="direccion_origen" name="direccion_origen" placeholder="Dirección de origen" required>
                             <input type="text" id="direccion_destino" name="direccion_destino" placeholder="Dirección de destino" required>
@@ -222,28 +222,16 @@
 </div>
 
 <script>
-    function initAutocomplete() {
-        const origen = document.getElementById("direccion_origen");
-        const destino = document.getElementById("direccion_destino");
-    
-        if (origen) {
-            new google.maps.places.Autocomplete(origen, {
-                types: ["address"],
-                componentRestrictions: { country: "co" }
-            });
-        }
-    
-        if (destino) {
-            new google.maps.places.Autocomplete(destino, {
-                types: ["address"],
-                componentRestrictions: { country: "co" }
-            });
-        }
-    }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABUjqnn42gv2L6Re4eNjRj_QQHjDbwQjc&libraries=places&callback=initAutocomplete"
-    async defer></script>
-    
+function initAutocomplete() {
+    const origen = document.getElementById("direccion_origen");
+    const destino = document.getElementById("direccion_destino");
+
+    if (origen) new google.maps.places.Autocomplete(origen, { componentRestrictions: { country: "co" } });
+    if (destino) new google.maps.places.Autocomplete(destino, { componentRestrictions: { country: "co" } });
+}
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABUjqnn42gv2L6Re4eNjRj_QQHjDbwQjc&libraries=places&callback=initAutocomplete" async defer></script>
 
 </body>
 </html>

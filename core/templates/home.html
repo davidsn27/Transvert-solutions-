@@ -183,6 +183,7 @@
             <div class="user-dropdown" id="userDropdown">
                 <a href="{% url 'seguimiento_envio' %}">📦 Seguimiento</a>
                 <a href="{% url 'crear_envio' %}">🚚 Crear Envío</a>
+                <a href="/soporte/">🛠 Soporte Técnico</a>
                 <a href="{% url 'logout' %}">🚪 Cerrar Sesión</a>
             </div>
 
@@ -254,6 +255,27 @@
             }
         }
     </script>
-
+    <div id="chatbot" style="position:fixed;bottom:20px;right:20px;background:#112d4e;padding:15px;border-radius:12px;width:260px;color:white;box-shadow:0 0 10px black;">
+        <div id="chat" style="height:150px;overflow:auto;margin-bottom:8px;"></div>
+        <input id="msg" placeholder="Escribe aquí..." style="width:100%;">
+        <button onclick="responder()" style="width:100%;margin-top:5px;background:red;color:white;border:none;">Enviar</button>
+      </div>
+      
+      <script>
+      function responder() {
+        let texto = msg.value.toLowerCase();
+        let r = "No entendí tu mensaje 😅";
+      
+        if (texto.includes("envio")) r = "Puedes crear envíos desde tu panel.";
+        if (texto.includes("guia")) r = "Tu número de guía aparece en tu historial.";
+        if (texto.includes("soporte")) r = "Puedes crear un ticket desde el panel de soporte.";
+        if (texto.includes("horario")) r = "Atendemos de lunes a sábado de 7am a 7pm.";
+      
+        chat.innerHTML += `<p><b>Tú:</b> ${msg.value}</p>`;
+        chat.innerHTML += `<p><b>Bot:</b> ${r}</p>`;
+        msg.value = "";
+      }
+      </script>
+      
 </body>
 </html>

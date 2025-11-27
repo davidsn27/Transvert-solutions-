@@ -16,20 +16,18 @@ urlpatterns = [
     path('crear-envio/', views.crear_envio, name='crear_envio'),
     path('api/crear-envio/', views.crear_envio_api, name='crear_envio_api'),
 
-    # ==========================
-    # RESTABLECER CONTRASEÑA (OFICIAL DJANGO)
-    # ==========================
+    # Password reset
     path(
         'password_reset/',
         auth_views.PasswordResetView.as_view(
             template_name='password_reset_form.html',
             email_template_name='password_reset_email.html',
+            html_email_template_name='password_reset_email.html',
             subject_template_name='password_reset_subject.txt',
-            success_url='done/'
+            success_url='/password_reset/done/'
         ),
         name='password_reset'
     ),
-
     path(
         'password_reset/done/',
         auth_views.PasswordResetDoneView.as_view(
@@ -37,7 +35,6 @@ urlpatterns = [
         ),
         name='password_reset_done'
     ),
-
     path(
         'reset/<uidb64>/<token>/',
         auth_views.PasswordResetConfirmView.as_view(
@@ -46,7 +43,6 @@ urlpatterns = [
         ),
         name='password_reset_confirm'
     ),
-
     path(
         'reset/done/',
         auth_views.PasswordResetCompleteView.as_view(
@@ -54,4 +50,14 @@ urlpatterns = [
         ),
         name='password_reset_complete'
     ),
+
+    # Soporte técnico
+    path('soporte/', views.crear_ticket, name='crear_ticket'),
+
+    # Administración de tickets
+    path('admin/tickets/', views.ver_tickets_admin, name='ver_tickets_admin'),
+    path('admin/ticket/responder/<int:id>/', views.responder_ticket, name='responder_ticket'),
+
+    # Guias y etiquetas
+    path('guia-etiqueta/<int:envio_id>/', views.descargar_guia_pdf, name='descargar_guia_pdf'),
 ]

@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,192 +7,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Transvert</title>
 
-    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-    <!-- Estilos -->
-    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
-
-    <!-- Iconos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        /* ================================
-        PALETA DE COLORES
-     ================================ */
-     :root {
-         --dark: #111827;
-         --primary: #1f2937;
-         --mid: #374151;
-         --light: #e5e7eb;
-         --accent: #2563eb;
-         --glass-bg: rgba(226, 232, 240, 0.25); /* gris azulado con transparencia */
-     }
-     
-     /* ================================
-        FONDO GENERAL
-     ================================ */
-     body {
-         font-family: Arial, sans-serif;
-         background: var(--light); /* Fondo gris claro */
-         margin: 0;
-         padding: 0;
-         color: var(--dark);
-     }
-     
-     /* ================================
-        CONTENEDOR GENERAL
-     ================================ */
-     .main-wrapper {
-         display: flex;
-         min-height: 100vh;
-         background: linear-gradient(135deg, #dce3ec, #f3f4f6);
-     }
-     
-     /* ================================
-        SIDEBAR (MENÚ LATERAL)
-     ================================ */
-     .sidebar {
-         width: 260px;
-         background: var(--primary);
-         color: white;
-         padding: 25px;
-         box-shadow: 4px 0 12px rgba(0, 0, 0, 0.25);
-         display: flex;
-         flex-direction: column;
-     }
-     
-     .sidebar h3 {
-         color: #71c5ee; /* azul suave */
-         text-align: center;
-         font-size: 22px;
-         margin-bottom: 25px;
-         font-weight: bold;
-     }
-     
-     .sidebar a {
-         background: var(--mid);
-         padding: 12px;
-         border-radius: 8px;
-         text-decoration: none;
-         color: #fff;
-         font-weight: bold;
-         margin-bottom: 12px;
-         font-size: 16px;
-         display: block;
-         transition: 0.2s ease-in-out;
-     }
-     
-     .sidebar a:hover {
-         background: #4b5563;
-     }
-     
-     /* ================================
-        ÁREA DE CONTENIDO
-     ================================ */
-     .content-area {
-         flex: 1;
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         padding: 40px;
-     }
-     
-     /* ================================
-        TARJETA TIPO "GLASS" SIN IMAGEN
-     ================================ */
-     .card {
-         width: 450px;
-         background: var(--glass-bg);
-         backdrop-filter: blur(12px);
-         -webkit-backdrop-filter: blur(12px);
-         border-radius: 18px;
-         padding: 30px;
-         border: 1px solid rgba(255, 255, 255, 0.3);
-         box-shadow: 0 0 35px rgba(0, 0, 0, 0.15);
-     }
-     
-     /* TÍTULO */
-     .card-title {
-         text-align: center;
-         font-size: 26px;
-         color: var(--dark);
-         font-weight: bold;
-         margin-bottom: 20px;
-     }
-     
-     /* ================================
-        FORMULARIO
-     ================================ */
-     form {
-         width: 100%;
-     }
-     
-     .form-group {
-         display: flex;
-         flex-direction: column;
-         margin-bottom: 18px;
-     }
-     
-     .form-group label {
-         font-size: 16px;
-         font-weight: bold;
-         color: var(--primary);
-         margin-bottom: 6px;
-     }
-     
-     .form-group input {
-         height: 48px;
-         border-radius: 10px;
-         border: 1px solid #bfc4cc;
-         padding: 12px;
-         font-size: 16px;
-         background: #f9fafb;
-     }
-     
-     /* ================================
-        BOTÓN PRINCIPAL
-     ================================ */
-     .btn-primary {
-         width: 100%;
-         height: 50px;
-         background: var(--mid);
-         color: #fff;
-         border-radius: 10px;
-         border: none;
-         font-size: 18px;
-         font-weight: bold;
-         cursor: pointer;
-         transition: 0.2s ease-in-out;
-     }
-     
-     .btn-primary:hover {
-         background: var(--dark);
-     }
-     
-     /* ================================
-        TEXTO SECUNDARIO
-     ================================ */
-     .text-center p {
-         font-size: 16px;
-         font-weight: bold;
-         color: var(--primary);
-         margin-top: 15px;
-     }
-     
-     .text-center a {
-         font-size: 16px;
-         font-weight: bold;
-         color: var(--accent);
-         text-decoration: none;
-     }
-     
-     .text-center a:hover {
-         text-decoration: underline;
-     }
-     
-     
+        :root {
+            --bg-light: #f3f4f6;
+            --glass-bg: rgba(255,255,255,0.35);
+            --glass-border: rgba(255,255,255,0.4);
+            --text-dark: #1f2937;
+            --sidebar: #111827;
+            --sidebar-hover: #1f2937;
+            --accent: #2563eb;
+        }
 
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg-light);
+            margin: 0;
+        }
+
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: row-reverse;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar);
+            padding: 25px;
+            color: #fff;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.25);
+        }
+
+        .sidebar h3 {
+            text-align: center;
+            font-size: 22px;
+            color: var(--accent);
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px;
+            color: #fff;
+            border-radius: 10px;
+            background: #1f2937;
+            margin-bottom: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: .2s;
+        }
+
+        .sidebar a:hover {
+            background: var(--sidebar-hover);
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .card {
+            width: 450px;
+            background: var(--glass-bg);
+            border-radius: 25px;
+            padding: 35px;
+            backdrop-filter: blur(14px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+        }
+
+        .card-title {
+            font-size: 28px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            height: 52px;
+            padding: 14px 50px 14px 18px;
+            border-radius: 18px;
+            border: 1px solid #cfd2d9;
+            background: #ffffffaa;
+            font-size: 16px;
+        }
+
+        .toggle-eye {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #444;
+            font-size: 18px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            height: 52px;
+            border-radius: 18px;
+            background: var(--accent);
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .text-center a {
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .text-danger {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .alert {
+            border-radius: 15px;
+        }
     </style>
 </head>
 
@@ -199,7 +155,6 @@
 
 <div class="main-wrapper">
 
-    <!-- SUBMENÚ LATERAL -->
     <div class="sidebar">
         <h3>Transvert</h3>
         <a href="{% url 'index' %}"><i class="fas fa-home"></i> Inicio</a>
@@ -207,104 +162,121 @@
         <a href="{% url 'contact' %}"><i class="fas fa-info-circle"></i> Acerca</a>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <div class="content-area">
 
-        <div class="container">
-            <div class="row justify-content-center mt-3">
-                <div class="col-md-7">
+        <div class="card">
 
-                    <div class="card">
-                        <div class="card-body">
+            <h2 class="card-title mb-4">
+                <i class="fas fa-user-plus"></i> Registro
+            </h2>
 
-                            <h2 class="card-title text-center mb-4">
-                                <i class="fas fa-user-plus"></i> Registro
-                            </h2>
-
-                            <form method="POST">
-                                {% csrf_token %}
-
-                                <!-- ERRORES GENERALES -->
-                                {% if form.non_field_errors %}
-                                    <div class="alert alert-danger">
-                                        {{ form.non_field_errors }}
-                                    </div>
-                                {% endif %}
-
-                                <!-- USUARIO -->
-                                <div class="form-group">
-                                    <label><i class="fas fa-user"></i> Usuario</label>
-                                    {{ form.username }}
-                                    {% for error in form.username.errors %}
-                                        <small class="error-text">{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-
-                                <!-- NOMBRE -->
-                                <div class="form-group">
-                                    <label><i class="fas fa-id-card"></i> Nombre</label>
-                                    {{ form.first_name }}
-                                    {% for error in form.first_name.errors %}
-                                        <small class="error-text">{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-
-                                <!-- APELLIDO -->
-                                <div class="form-group">
-                                    <label><i class="fas fa-id-card"></i> Apellido</label>
-                                    {{ form.last_name }}
-                                    {% for error in form.last_name.errors %}
-                                        <small class="error-text">{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-
-                                <!-- EMAIL -->
-                                <div class="form-group">
-                                    <label><i class="fas fa-envelope"></i> Correo</label>
-                                    {{ form.email }}
-                                    {% for error in form.email.errors %}
-                                        <small class="error-text">{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-
-                                <!-- PASSWORD -->
-                                <div class="form-group">
-                                    <label><i class="fas fa-lock"></i> Contraseña</label>
-                                    {{ form.password1 }}
-                                    {% for error in form.password1.errors %}
-                                        <small class="error-text">{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-
-                                <!-- CONFIRM PASSWORD -->
-                                <div class="form-group">
-                                    <label><i class="fas fa-lock"></i> Confirmar contraseña</label>
-                                    {{ form.password2 }}
-                                    {% for error in form.password2.errors %}
-                                        <small class="error-text">{{ error }}</small>
-                                    {% endfor %}
-                                </div>
-
-                                <button type="submit" class="btn btn-primary btn-block">
-                                    <i class="fas fa-save"></i> Registrarse
-                                </button>
-                            </form>
-
-                            <div class="text-center mt-3">
-                                <p>¿Ya tienes cuenta?
-                                    <a href="{% url 'login' %}">Inicia sesión aquí</a>
-                            </div>
-
-                        </div>
+            <!-- MENSAJES GENERALES -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }}">
+                        {{ message }}
                     </div>
+                {% endfor %}
+            {% endif %}
 
+            <!-- FORMULARIO -->
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label><i class="fa fa-user"></i> Usuario</label>
+                    <div class="input-wrapper">
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger">{{ form.username.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
                 </div>
+
+                <div class="form-group">
+                    <label><i class="fa fa-id-card"></i> Nombre</label>
+                    <div class="input-wrapper">
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <div class="text-danger">{{ form.first_name.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa fa-id-card"></i> Apellido</label>
+                    <div class="input-wrapper">
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <div class="text-danger">{{ form.last_name.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa fa-envelope"></i> Correo</label>
+                    <div class="input-wrapper">
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa fa-lock"></i> Contraseña</label>
+                    <div class="input-wrapper">
+                        {{ form.password1 }}
+                        <i class="fa-solid fa-eye toggle-eye"
+                           onclick="togglePassword('id_password1', this)"></i>
+                        {% if form.password1.errors %}
+                            <div class="text-danger">{{ form.password1.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa fa-lock"></i> Confirmar contraseña</label>
+                    <div class="input-wrapper">
+                        {{ form.password2 }}
+                        <i class="fa-solid fa-eye toggle-eye"
+                           onclick="togglePassword('id_password2', this)"></i>
+                        {% if form.password2.errors %}
+                            <div class="text-danger">{{ form.password2.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Registrarse
+                </button>
+            </form>
+
+            <div class="text-center mt-3">
+                <p>¿Ya tienes cuenta?
+                    <a href="{% url 'login' %}">Inicia sesión aquí</a>
+                </p>
             </div>
+
         </div>
 
     </div>
 
 </div>
+
+<script>
+function togglePassword(id, icon) {
+    let input = document.getElementById(id);
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+        input.type = "password";
+        icon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+}
+</script>
 
 </body>
 </html>

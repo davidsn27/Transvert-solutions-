@@ -1,24 +1,23 @@
-"""
-Django settings for transvert_solutions project.
-"""
-
 from pathlib import Path
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# --------------------------------------------------
+# BASE DEL PROYECTO
+# --------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-tu_clave_secreta'  # ¡CAMBIA ESTO EN PRODUCCIÓN!
+# --------------------------------------------------
+# SEGURIDAD
+# --------------------------------------------------
+SECRET_KEY = 'django-insecure-tu_clave_secreta'
+DEBUG = True
+ALLOWED_HOSTS = ['*']
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # ¡CAMBIA A False EN PRODUCCIÓN!
 
-# Application definition
-
+# --------------------------------------------------
+# APLICACIONES
+# --------------------------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -26,11 +25,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
     'corsheaders',
-    'core',  # Tu aplicación 'core'
+
+    'core',
 ]
 
+
+# --------------------------------------------------
+# MIDDLEWARE
+# --------------------------------------------------
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -42,13 +47,21 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+# --------------------------------------------------
+# URLS Y WSGI
+# --------------------------------------------------
 ROOT_URLCONF = 'urls'
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+
+# --------------------------------------------------
+# TEMPLATES
+# --------------------------------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Agrega la carpeta 'templates' en la raíz del proyecto
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -57,83 +70,79 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ]
-            
         },
-    }
+    },
 ]
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
+# --------------------------------------------------
+# BASE DE DATOS
+# --------------------------------------------------
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # Puedes usar otro motor de base de datos (ej. PostgreSQL)
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
+# --------------------------------------------------
+# VALIDACIÓN DE CONTRASEÑAS
+# --------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'es'  # Cambia al idioma que prefieras
-
-TIME_ZONE = 'America/Bogota'  # Cambia a tu zona horaria
-
+# --------------------------------------------------
+# IDIOMA Y ZONA HORARIA
+# --------------------------------------------------
+LANGUAGE_CODE = 'es'
+TIME_ZONE = 'America/Bogota'
 USE_I18N = True
-USE_L10N = True 
-
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)k
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-# Ruta de archivos estáticos
+# --------------------------------------------------
+# ARCHIVOS ESTÁTICOS
+# --------------------------------------------------
 STATIC_URL = '/static/'
-
-# Carpeta donde estarán tus archivos CSS, JS, imágenes
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-
-# Opcional, para producción
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+
+# --------------------------------------------------
+# ARCHIVOS MULTIMEDIA
+# --------------------------------------------------
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+
+# --------------------------------------------------
+# CLAVE PRIMARIA POR DEFECTO
+# --------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Configuración de correo electrónico
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'tu_servidor_smtp.com'  # Cambia esto
-EMAIL_PORT = 587  # o 465 si usas SSL
-EMAIL_USE_TLS = True  # o EMAIL_USE_SSL = True si usas SSL
-EMAIL_HOST_USER = 'tu_correo@example.com'  # Cambia esto
-EMAIL_HOST_PASSWORD = 'tu_contraseña'  # Cambia esto
-DEFAULT_FROM_EMAIL = 'tu_correo@example.com'  # Cambia esto
 
-# Redirect URLs
-LOGIN_REDIRECT_URL = 'index'  # Redirige al 'index' después del inicio de sesión
-LOGOUT_REDIRECT_URL = 'index'  # Redirige al 'index' después del cierre de sesión
+# --------------------------------------------------
+# LOGIN Y LOGOUT
+# --------------------------------------------------
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'index'
 
-# Configuración de la API de Google Maps
-GOOGLE_MAPS_API_KEY = "AIzaSyABUjqnn42gv2L6Re4eNjRj_QQHjDbwQjc"  # ¡CAMBIA ESTO!
 
-# Configuración de Django REST Framework
+# --------------------------------------------------
+# GOOGLE MAPS (OPCIONAL)
+# --------------------------------------------------
+GOOGLE_MAPS_API_KEY = "AIzaSyABUjqnn42gv2L6Re4eNjRj_QQHjDbwQjc"
+
+
+# --------------------------------------------------
+# DJANGO REST FRAMEWORK
+# --------------------------------------------------
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -143,8 +152,39 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
-# Configuración de CORS
+
+
+# --------------------------------------------------
+# CORS
+# --------------------------------------------------
 CORS_ALLOWED_ORIGINS = [
-    "https://tu_dominio_cliente.com",
-    "http://localhost:3000",  # Ejemplo para desarrollo
+    "http://localhost:3000",
 ]
+
+
+# --------------------------------------------------
+# CONFIGURACIÓN DE EMAIL (RECUPERACIÓN DE CONTRASEÑA)
+# --------------------------------------------------
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = "transvert.solutions.enterprice@gmail.com"
+EMAIL_HOST_PASSWORD = "ecbybutztbvmvzcz"
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+PASSWORD_RESET_TIMEOUT = 900
+
+
+# --------------------------------------------------
+# DOMINIO PARA ENLACES DE CORREO
+# --------------------------------------------------
+DEFAULT_DOMAIN = "172.30.3.122:8000"
+
+
+# --------------------------------------------------
+# SITE ID
+# --------------------------------------------------
+SITE_ID = 1

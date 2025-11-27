@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tickets de Soporte - Admin</title>
+  <style>
+    body {
+      background: #0b1e33;
+      color: white;
+      font-family: Arial;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #112d4e;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #333;
+      text-align: center;
+    }
+    th {
+      background: red;
+    }
+    textarea {
+      width: 100%;
+      border-radius: 5px;
+    }
+    button {
+      background: green;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Tickets de Soporte</h2>
+
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Usuario</th>
+    <th>Asunto</th>
+    <th>Descripción</th>
+    <th>Estado</th>
+    <th>Responder</th>
+  </tr>
+
+  {% for t in tickets %}
+  <tr>
+    <td>{{ t.id }}</td>
+    <td>{{ t.usuario.username }}</td>
+    <td>{{ t.asunto }}</td>
+    <td>{{ t.descripcion }}</td>
+    <td>{{ t.estado }}</td>
+    <td>
+      <textarea id="msg{{ t.id }}"></textarea>
+      <button onclick="responder({{ t.id }})">Enviar</button>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<script>
+function responder(id) {
+  fetch('/admin/ticket/responder/' + id + '/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      mensaje: document.getElementById('msg' + id).value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.msg);
+    location.reload();
+  });
+}
+</script>
+
+</body>
+</html>

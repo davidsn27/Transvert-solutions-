@@ -3,225 +3,153 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Staff - Transvert Solutions</title>
-
-    <!-- Bootstrap & FontAwesome -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <!-- CSS personalizado -->
-    <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
 
     <style>
-        body { background-color: #f8f9fa; }
-        header { background: #343a40; color: white; padding: 1.5rem; text-align: center; margin-bottom: 20px; border-radius: .25rem; }
-        footer { margin-top: 40px; background: #343a40; color: white; padding: 1rem; text-align: center; border-radius: .25rem; }
-        .nav-tabs .nav-link.active { background-color: #343a40; color: white; }
-        .card { margin-top: 20px; }
-        .table thead th { background-color: #e9ecef; }
-        .btn-sm { margin: 2px; }
-        .filter-group { margin-bottom: 15px; }
+        body { background-color: #f5f6f8; }
+        header { background-color: #343a40; color: white; padding: 1rem 0; margin-bottom: 2rem; }
+        .panel-card { background: #fff; border-radius: 10px; padding: 1.8rem; box-shadow: 0 3px 8px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+        nav a { margin-right: 1rem; }
+        textarea { resize: none; }
     </style>
 </head>
+
 <body>
-<div class="container">
 
-    <!-- NAV -->
-    <nav class="d-flex justify-content-between align-items-center mt-3 mb-3">
-        <a href="{% url 'home' %}" class="btn btn-primary"><i class="fas fa-home"></i> Página Principal</a>
-        <a href="{% url 'logout' %}" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-    </nav>
-
-    <header>
-        <h1>Panel de Staff - Transvert Solutions</h1>
-    </header>
-
-    <!-- PESTAÑAS -->
-    <ul class="nav nav-tabs" id="panelTabs" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="envios-tab" data-toggle="tab" href="#envios" role="tab" aria-controls="envios" aria-selected="true">
-                Envíos
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="tickets-tab" data-toggle="tab" href="#tickets" role="tab" aria-controls="tickets" aria-selected="false">
-                Tickets de Soporte
-            </a>
-        </li>
-    </ul>
-
-    <div class="tab-content" id="panelTabsContent">
-
-        <!-- PESTAÑA ENVIOS -->
-        <div class="tab-pane fade show active" id="envios" role="tabpanel" aria-labelledby="envios-tab">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span><i class="fas fa-truck"></i> Envíos</span>
-                    <a href="{% url 'crear_envio' %}" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Crear Envío</a>
-                </div>
-                <div class="card-body">
-
-                    <!-- FILTROS ENVÍOS -->
-                    <div class="filter-group">
-                        <button class="btn btn-sm btn-secondary" onclick="filtrarEnvios('todos')">Todos</button>
-                        <button class="btn btn-sm btn-warning" onclick="filtrarEnvios('Pendiente')">Pendiente</button>
-                        <button class="btn btn-sm btn-info" onclick="filtrarEnvios('En camino')">En camino</button>
-                        <button class="btn btn-sm btn-success" onclick="filtrarEnvios('Entregado')">Entregado</button>
-                    </div>
-
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>Guía</th>
-                                <th>Remitente</th>
-                                <th>Destinatario</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="envios-body">
-                            {% for envio in envios %}
-                            <tr class="envio-item" data-estado="{{ envio.estado }}" id="envio-{{ envio.id }}">
-                                <td>{{ envio.numero_guia }}</td>
-                                <td>{{ envio.remitente_nombre }}</td>
-                                <td>{{ envio.destinatario_nombre }}</td>
-                                <td class="estado">{{ envio.estado }}</td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm" onclick="cambiarEstado({{ envio.id }}, 'Pendiente')"><i class="fas fa-clock"></i></button>
-                                    <button class="btn btn-info btn-sm" onclick="cambiarEstado({{ envio.id }}, 'En camino')"><i class="fas fa-truck"></i></button>
-                                    <button class="btn btn-success btn-sm" onclick="cambiarEstado({{ envio.id }}, 'Entregado')"><i class="fas fa-check-circle"></i></button>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr><td colspan="5" class="text-center">No hay envíos disponibles</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- PESTAÑA TICKETS -->
-        <div class="tab-pane fade" id="tickets" role="tabpanel" aria-labelledby="tickets-tab">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-ticket-alt"></i> Tickets de Soporte</div>
-                <div class="card-body">
-
-                    <!-- FILTROS TICKETS -->
-                    <div class="filter-group">
-                        <button class="btn btn-sm btn-secondary" onclick="filtrarTickets('todos')">Todos</button>
-                        <button class="btn btn-sm btn-warning" onclick="filtrarTickets('Pendiente')">Pendiente</button>
-                        <button class="btn btn-sm btn-info" onclick="filtrarTickets('En proceso')">En proceso</button>
-                        <button class="btn btn-sm btn-success" onclick="filtrarTickets('Respondido')">Respondido</button>
-                    </div>
-
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Usuario</th>
-                                <th>Asunto</th>
-                                <th>Prioridad</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tickets-body">
-                            {% for ticket in tickets %}
-                            <tr class="ticket-item" data-estado="{{ ticket.estado }}" id="ticket-{{ ticket.id }}">
-                                <td>{{ ticket.id }}</td>
-                                <td>{{ ticket.usuario.username }}</td>
-                                <td>{{ ticket.asunto }}</td>
-                                <td>{{ ticket.prioridad }}</td>
-                                <td>{{ ticket.estado }}</td>
-                                <td>
-                                    <button class="btn btn-success btn-sm" onclick="responderTicket({{ ticket.id }})"><i class="fas fa-reply"></i> Responder</button>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr><td colspan="6" class="text-center">No hay tickets disponibles</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<header class="container-fluid">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h3 class="m-0">Panel Staff</h3>
+        <div>
+            <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">Home</a>
+            <a href="{% url 'crear_envio' %}" class="btn btn-primary btn-sm">Crear Envío</a>
+            <a href="{% url 'seguimiento_envio' %}" class="btn btn-info btn-sm">Seguimiento</a>
+            <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Cerrar Sesión</a>
         </div>
     </div>
+</header>
 
-</div>
+<main class="container">
 
-<!-- JS Bootstrap -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
 
-<script>
-function cambiarEstado(envioId, nuevoEstado) {
-    fetch("{% url 'actualizar_estado_envio' %}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": "{{ csrf_token }}"
-        },
-        body: `envio_id=${envioId}&nuevo_estado=${nuevoEstado}`
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data.success){
-            const row = document.querySelector(`#envio-${envioId} .estado`);
-            if(row) row.textContent = data.nuevo_estado;
-        } else { alert("Error al actualizar estado"); }
-    });
-}
+    <!-- FILTROS ENVÍOS -->
+    <div class="panel-card">
+        <h4>Envíos Recientes</h4>
+        <form method="GET" class="form-inline mb-3">
+            <label class="mr-2">Filtrar por estado:</label>
+            <select name="estado_envio" class="form-control mr-2">
+                <option value="">Todos</option>
+                <option value="Pendiente" {% if request.GET.estado_envio == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                <option value="En Proceso" {% if request.GET.estado_envio == 'En Proceso' %}selected{% endif %}>En Proceso</option>
+                <option value="Entregado" {% if request.GET.estado_envio == 'Entregado' %}selected{% endif %}>Entregado</option>
+            </select>
+            <button type="submit" class="btn btn-secondary btn-sm">Filtrar</button>
+        </form>
 
-function responderTicket(ticketId) {
-    let respuesta = prompt("Ingrese la respuesta al ticket:");
-    if(!respuesta) return;
+        {% if envios %}
+            <table class="table table-bordered table-sm mt-3">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Guía</th>
+                        <th>Remitente</th>
+                        <th>Destinatario</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for envio in envios %}
+                        <tr>
+                            <td>{{ envio.numero_guia }}</td>
+                            <td>{{ envio.remitente_nombre }}</td>
+                            <td>{{ envio.destinatario_nombre }}</td>
+                            <td>{{ envio.estado }}</td>
+                            <td>
+                                <form method="POST" action="{% url 'actualizar_estado_envio' %}" style="display:inline-block;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="envio_id" value="{{ envio.id }}">
+                                    <button name="nuevo_estado" value="Pendiente" class="btn btn-warning btn-sm">Pendiente</button>
+                                    <button name="nuevo_estado" value="En Proceso" class="btn btn-info btn-sm">En Proceso</button>
+                                    <button name="nuevo_estado" value="Entregado" class="btn btn-success btn-sm">Entregado</button>
+                                </form>
+                                <a href="{% url 'descargar_guia_pdf' envio.id %}" class="btn btn-secondary btn-sm mt-1">Descargar Guía</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No hay envíos registrados.</p>
+        {% endif %}
+    </div>
 
-    let nuevoEstado = prompt("Ingrese nuevo estado (Pendiente / En proceso / Respondido):", "Respondido");
-    if(!nuevoEstado) nuevoEstado = "Respondido";
+    <!-- FILTROS TICKETS -->
+    <div class="panel-card">
+        <h4>Soporte - Tickets</h4>
+        <form method="GET" class="form-inline mb-3">
+            <label class="mr-2">Filtrar por estado:</label>
+            <select name="estado_ticket" class="form-control mr-2">
+                <option value="">Todos</option>
+                <option value="Pendiente" {% if request.GET.estado_ticket == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                <option value="En Proceso" {% if request.GET.estado_ticket == 'En Proceso' %}selected{% endif %}>En Proceso</option>
+                <option value="Resuelto" {% if request.GET.estado_ticket == 'Resuelto' %}selected{% endif %}>Resuelto</option>
+            </select>
+            <button type="submit" class="btn btn-secondary btn-sm">Filtrar</button>
+        </form>
 
-    fetch("{% url 'responder_ticket' 0 %}".replace('0', ticketId), {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}"
-        },
-        body: JSON.stringify({mensaje: respuesta, estado: nuevoEstado})
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data.success){
-            alert("Respuesta enviada correctamente");
-            location.reload();
-        } else { alert("Error al enviar respuesta"); }
-    });
-}
+        {% if tickets %}
+            <table class="table table-bordered table-sm mt-3">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Asunto</th>
+                        <th>Mensaje</th>
+                        <th>Estado / Responder</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.usuario.username }}</td>
+                            <td>{{ ticket.asunto }}</td>
+                            <td>{{ ticket.descripcion }}</td>
+                            <td>
+                                <form method="POST" action="{% url 'responder_ticket' ticket.id %}">
+                                    {% csrf_token %}
+                                    <textarea name="mensaje" class="form-control mb-1" rows="2" placeholder="Escribe tu respuesta aquí..."></textarea>
+                                    <select name="estado" class="form-control form-control-sm mb-1">
+                                        <option value="Pendiente" {% if ticket.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                                        <option value="En Proceso" {% if ticket.estado == 'En Proceso' %}selected{% endif %}>En Proceso</option>
+                                        <option value="Resuelto" {% if ticket.estado == 'Resuelto' %}selected{% endif %}>Resuelto</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary btn-sm">Enviar ✅</button>
+                                </form>
 
+                                {% for resp in ticket.soporterespuesta_set.all %}
+                                    <div class="alert alert-success mt-2">
+                                        <b>{{ resp.usuario.username }}:</b> {{ resp.mensaje }}
+                                    </div>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No hay tickets registrados.</p>
+        {% endif %}
+    </div>
 
-// FILTRADO ENVÍOS
-function filtrarEnvios(estado) {
-    document.querySelectorAll('.envio-item').forEach(row => {
-        if(estado === 'todos' || row.dataset.estado === estado){
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
+</main>
 
-// FILTRADO TICKETS
-function filtrarTickets(estado) {
-    document.querySelectorAll('.ticket-item').forEach(row => {
-        if(estado === 'todos' || row.dataset.estado.toLowerCase() === estado.toLowerCase()){
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
-</script>
+<footer class="container-fluid bg-dark text-white text-center py-3">
+    &copy; 2025 Transvert Solutions
+</footer>
 
-<footer>© 2025 Transvert Solutions - Panel Staff</footer>
 </body>
 </html>

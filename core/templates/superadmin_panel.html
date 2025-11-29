@@ -3,46 +3,21 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Administrador - Transvert Solutions</title>
+    <title>Panel Super Administrador - Transvert Solutions</title>
 
     <link rel="icon" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'styles.css' %}?v={{ now|date:'U' }}">
 
     <style>
-        body {
-            background-color: #f5f6f8;
-        }
-
-        header {
-            background-color: #343a40;
-            color: white;
-            padding: 1rem 0;
-            margin-bottom: 2rem;
-        }
-
-        .panel-card {
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 1.8rem;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 0.8rem 1.2rem;
-            border-radius: 6px !important;
-        }
+        body { background-color: #f5f6f8; }
+        header { background-color: #343a40; color: white; padding: 1rem 0; margin-bottom: 2rem; }
+        .panel-card { background: #ffffff; border-radius: 10px; padding: 1.8rem; box-shadow: 0 3px 8px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+        .btn-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .btn { padding: 0.8rem 1.2rem; border-radius: 6px !important; }
+        table { font-size: 14px; }
+        .filtro-input { max-width: 200px; display: inline-block; margin-right: 10px; }
     </style>
 </head>
 
@@ -50,10 +25,7 @@
 
 <header class="container-fluid">
     <div class="container d-flex justify-content-between align-items-center">
-        <h1 class="m-0">
-            <i class="fas fa-user-shield"></i> Panel del Administrador
-        </h1>
-
+        <h1 class="m-0"><i class="fas fa-user-shield"></i> Super Administrador</h1>
         <a href="{% url 'logout' %}" class="btn btn-danger">
             <i class="fas fa-sign-out-alt"></i> Cerrar sesión
         </a>
@@ -62,46 +34,94 @@
 
 <main class="container">
 
-    {% if messages %}
-        <div class="my-3">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
     <section class="panel-card">
-        <h2>
-            <i class="fas fa-user-shield"></i> Bienvenido, {{ user.username }}
-        </h2>
-        <p>Desde este panel puedes supervisar usuarios, envíos y los reportes del sistema.</p>
+        <h2><i class="fas fa-user-shield"></i> Bienvenido, {{ user.username }}</h2>
+        <p>Control total del sistema Transvert Solutions.</p>
     </section>
 
+    <!-- BOTONES PRINCIPALES -->
     <section class="panel-card">
-        <h3 class="mb-3">
-            <i class="fas fa-tools"></i> Gestión rápida
-        </h3>
-
         <div class="btn-row">
-
-            <!-- Admin Django -->
-            <a href="/admin/" class="btn btn-primary">
-                <i class="fas fa-users-cog"></i> Administrar usuarios (Django)
-            </a>
-
-            <!-- Home -->
-            <a href="{% url 'home' %}" class="btn btn-secondary">
-                <i class="fas fa-home"></i> Ver Home del sistema
-            </a>
-
-            <!-- NUEVO: Envíos -->
-            <a href="{% url 'crear_envio' %}" class="btn btn-success">
-                <i class="fas fa-truck"></i> creaar nuevo envio
-            </a>
-
+            <a href="/admin/" class="btn btn-primary"><i class="fas fa-users-cog"></i> Usuarios</a>
+            <a href="{% url 'crear_envio' %}" class="btn btn-success"><i class="fas fa-truck"></i> Crear Envío</a>
+            <a href="{% url 'home' %}" class="btn btn-secondary"><i class="fas fa-home"></i> Home</a>
         </div>
+    </section>
+
+    <!-- FILTROS DE ENVIOS -->
+    <section class="panel-card">
+        <h4><i class="fas fa-box"></i> Envíos Registrados</h4>
+        <div class="mb-2">
+            <input type="text" id="filtro-guia" class="form-control filtro-input" placeholder="Filtrar por Guía">
+            <input type="text" id="filtro-origen" class="form-control filtro-input" placeholder="Filtrar por Origen">
+            <input type="text" id="filtro-destino" class="form-control filtro-input" placeholder="Filtrar por Destino">
+        </div>
+        <table class="table table-bordered table-sm" id="tabla-envios">
+            <tr>
+                <th>Guía</th>
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Estado</th>
+            </tr>
+            {% for e in envios %}
+            <tr>
+                <td>{{ e.numero_guia }}</td>
+                <td>{{ e.direccion_origen }}</td>
+                <td>{{ e.direccion_destino }}</td>
+                <td>
+                    <form method="post" action="{% url 'actualizar_estado_envio' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="envio_id" value="{{ e.id }}">
+                        <select name="nuevo_estado" onchange="this.form.submit()">
+                            <option {% if e.estado == "REGISTRADO" %}selected{% endif %}>REGISTRADO</option>
+                            <option {% if e.estado == "EN RUTA" %}selected{% endif %}>EN RUTA</option>
+                            <option {% if e.estado == "ENTREGADO" %}selected{% endif %}>ENTREGADO</option>
+                        </select>
+                    </form>
+                </td>
+               
+            </tr>
+            {% endfor %}
+        </table>
+    </section>
+
+    <!-- FILTROS DE TICKETS -->
+    <section class="panel-card">
+        <h4><i class="fas fa-headset"></i> Tickets de Soporte</h4>
+        <div class="mb-2">
+            <input type="text" id="filtro-usuario" class="form-control filtro-input" placeholder="Filtrar por Usuario">
+            <select id="filtro-estado" class="form-control filtro-input">
+                <option value="">Todos los estados</option>
+                <option value="EN PROCESO">EN PROCESO</option>
+                <option value="CERRADO">CERRADO</option>
+            </select>
+        </div>
+        <table class="table table-bordered table-sm" id="tabla-tickets">
+            <tr>
+                <th>Usuario</th>
+                <th>Asunto</th>
+                <th>Estado</th>
+            </tr>
+            {% for t in tickets %}
+            <tr>
+                <td class="ticket-usuario">{{ t.usuario.username }}</td>
+                <td>{{ t.asunto }}</td>
+                <td id="estado-{{ t.id }}">{{ t.estado }}</td>
+                <td>
+                    <!-- FORMULARIO SIMILAR AL STAFF -->
+                    <form method="post" action="{% url 'responder_ticket' t.id %}">
+                    </form>
+                    <div id="respuestas-{{ t.id }}">
+                        {% for resp in t.soporterespuesta_set.all %}
+                            <div class="alert alert-success mt-1">
+                                <b>{{ resp.usuario.username }}:</b> {{ resp.mensaje }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
     </section>
 
 </main>
@@ -109,6 +129,39 @@
 <footer class="container-fluid bg-dark text-white text-center py-3">
     <p class="m-0">&copy; 2025 Transvert Solutions</p>
 </footer>
+
+<script>
+// FILTROS ENVÍOS
+function filtrarEnvios() {
+    const guia = document.getElementById('filtro-guia').value.toLowerCase();
+    const origen = document.getElementById('filtro-origen').value.toLowerCase();
+    const destino = document.getElementById('filtro-destino').value.toLowerCase();
+    document.querySelectorAll('#tabla-envios tr').forEach((row, i) => {
+        if(i===0) return;
+        const cGuia = row.children[0].innerText.toLowerCase();
+        const cOrigen = row.children[1].innerText.toLowerCase();
+        const cDestino = row.children[2].innerText.toLowerCase();
+        row.style.display = (cGuia.includes(guia) && cOrigen.includes(origen) && cDestino.includes(destino)) ? '' : 'none';
+    });
+}
+document.getElementById('filtro-guia').addEventListener('input', filtrarEnvios);
+document.getElementById('filtro-origen').addEventListener('input', filtrarEnvios);
+document.getElementById('filtro-destino').addEventListener('input', filtrarEnvios);
+
+// FILTROS TICKETS
+function filtrarTickets() {
+    const usuario = document.getElementById('filtro-usuario').value.toLowerCase();
+    const estado = document.getElementById('filtro-estado').value;
+    document.querySelectorAll('#tabla-tickets tr').forEach((row,i)=>{
+        if(i===0) return;
+        const cUsuario = row.querySelector('.ticket-usuario').innerText.toLowerCase();
+        const cEstado = row.children[2].innerText;
+        row.style.display = (cUsuario.includes(usuario) && (estado==="" || cEstado===estado)) ? '' : 'none';
+    });
+}
+document.getElementById('filtro-usuario').addEventListener('input', filtrarTickets);
+document.getElementById('filtro-estado').addEventListener('change', filtrarTickets);
+</script>
 
 </body>
 </html>

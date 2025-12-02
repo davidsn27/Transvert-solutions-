@@ -104,6 +104,9 @@ class Envio(models.Model):
 
     # Estado del envío (Usamos las opciones ampliadas)
     estado = models.CharField(max_length=20, choices=ESTADOS, default="Creado")
+    
+    # [NUEVO] Vínculo al usuario que creó el envío (Para el Panel de Cliente)
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     # ✅ FECHA CORRECTA QUE USA EL PANEL
     fecha_creado = models.DateTimeField(auto_now_add=True)

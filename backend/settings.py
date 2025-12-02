@@ -193,4 +193,4 @@ SITE_ID = 1
 # --------------------------------------------------
 # CLAVE DE GEMINI API (ADICIÓN PARA CHATBOT)
 # --------------------------------------------------
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'TU_CLAVE_GEMINI_AQUI_REEMPLAZAME')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'AIzaSyD1QcU9uW7JSVKYBBMsqCaxLiPg2QZ5srs')

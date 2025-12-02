@@ -25,6 +25,9 @@ urlpatterns = [
     path('seguimiento/', views.seguimiento_envio, name='seguimiento_envio'),
     path('actualizar_estado_envio/', views.actualizar_estado_envio, name='actualizar_estado_envio'),
 
+    # API del Chatbot (NUEVA URL)
+    path('api/chatbot/', views.chatbot_response, name='chatbot_response'),
+
     # PDF / Guías
     path('guia-etiqueta/<int:envio_id>/', views.descargar_guia_pdf, name='descargar_guia_pdf'),
 

@@ -21,6 +21,14 @@ from google import genai
 from .models import Envio, SoporteTicket, SoporteRespuesta, TrazaEnvio, Zona, Tarifa 
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
+# ReportLab para PDF (asegúrate de que está instalado: pip install reportlab)
+try:
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.pagesizes import A6
+except ImportError:
+    pass # Permite que el código compile si reportlab no está instalado
+
+
 # -------------------------------
 # LOGIN / LOGOUT / REGISTRO
 # -------------------------------
@@ -47,7 +55,7 @@ def login_view(request):
             elif user.is_staff:
                 return redirect('staff_panel')
             else:
-                return redirect('home')
+                return redirect('client_dashboard') # Redirección a nuevo panel de cliente
         messages.error(request, "Usuario o contraseña incorrectos")
     return render(request, 'login.html', {'form': form})
 
@@ -116,8 +124,22 @@ def superadmin_panel(request):
         'tickets': tickets
     })
 
+# [NUEVO] VISTA DEL PANEL DE CLIENTE
+@login_required(login_url='login')
+def client_dashboard(request):
+    """Muestra el panel de control del cliente con sus envíos y tickets (PUNTO 2.1)."""
+    # Filtra envíos y tickets solo para el usuario logueado
+    envios_del_usuario = Envio.objects.filter(usuario=request.user).order_by('-fecha_creado')
+    tickets_del_usuario = SoporteTicket.objects.filter(usuario=request.user).order_by('-fecha')
+
+    return render(request, 'client_dashboard.html', {
+        'envios': envios_del_usuario,
+        'tickets': tickets_del_usuario
+    })
+
+
 # -------------------------------
-# LÓGICA DE COTIZACIÓN (NUEVO)
+# LÓGICA DE COTIZACIÓN
 # -------------------------------
 
 def calcular_peso_volumetrico(largo, ancho, alto, factor_divisor=5000):
@@ -197,7 +219,7 @@ def cotizar_envio(request):
 
 
 # -------------------------------
-# CREAR ENVÍO
+# CREAR ENVÍO (MODIFICADO para guardar el usuario)
 # -------------------------------
 @login_required(login_url='login')
 def crear_envio(request):
@@ -218,7 +240,8 @@ def crear_envio(request):
             dimensiones=request.POST.get("dimensiones") or "",
             direccion_origen=request.POST.get("direccion_origen"),
             direccion_destino=request.POST.get("direccion_destino"),
-            estado='Creado' # Asegurar que el estado inicial sea 'Creado'
+            estado='Creado', # Asegurar que el estado inicial sea 'Creado'
+            usuario=request.user # <<<< LÍNEA AÑADIDA
         )
         
         # 2. Crear la primera traza de historial
@@ -339,23 +362,37 @@ def actualizar_estado_envio(request):
 # PDF + QR
 # -------------------------------
 def descargar_guia_pdf(request, envio_id):
-    envio = get_object_or_404(Envio, id=envio_id)
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename=guia_{envio.numero_guia}.pdf'
-    p = canvas.Canvas(response, pagesize=A6)
-    p.drawString(20, 750, "TRANSVERT SOLUTIONS")
-    p.drawString(20, 730, f"GUIA: {envio.numero_guia}")
-    p.drawString(20, 710, f"ORIGEN: {envio.direccion_origen}")
-    p.drawString(20, 690, f"DESTINO: {envio.direccion_destino}")
+    try:
+        envio = get_object_or_404(Envio, id=envio_id)
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename=guia_{envio.numero_guia}.pdf'
+        
+        # Asegúrate de haber instalado reportlab
+        p = canvas.Canvas(response, pagesize=A6)
+        p.drawString(20, 750, "TRANSVERT SOLUTIONS")
+        p.drawString(20, 730, f"GUIA: {envio.numero_guia}")
+        p.drawString(20, 710, f"ORIGEN: {envio.direccion_origen}")
+        p.drawString(20, 690, f"DESTINO: {envio.direccion_destino}")
 
-    qr = qrcode.make(envio.numero_guia)
-    path = os.path.join(tempfile.gettempdir(), "qr.png")
-    qr.save(path)
-    p.drawImage(path, 150, 650, 100, 100)
+        qr = qrcode.make(envio.numero_guia)
+        # Usamos /tmp/ como un directorio seguro para sistemas basados en Unix/Linux/macOS. 
+        # En Windows, tempfile.gettempdir() obtiene el path correcto.
+        path = os.path.join(tempfile.gettempdir(), f"qr_{envio.numero_guia}.png") 
+        qr.save(path)
+        p.drawImage(path, 150, 650, 100, 100)
 
-    p.showPage()
-    p.save()
-    return response
+        p.showPage()
+        p.save()
+        # Opcional: limpiar el archivo temporal
+        if os.path.exists(path):
+            os.remove(path)
+            
+        return response
+    except NameError:
+        return HttpResponse("Error: Las librerías ReportLab o QR code no están instaladas (pip install reportlab qrcode).", status=500)
+    except Exception as e:
+        return HttpResponse(f"Error al generar PDF: {str(e)}", status=500)
+
 
 # -------------------------------
 # API CREAR ENVÍO
@@ -380,10 +417,10 @@ def crear_envio_api(request):
         direccion_origen=data.get('direccion_origen'),
         direccion_destino=data.get('direccion_destino'),
         estado='Creado' # Estado inicial
+        # El campo 'usuario' queda como NULL aquí, lo cual es correcto para una API
     )
     
     # 2. Crear la primera traza de historial (simulando que la API la crea)
-    # Nota: Aquí no hay request.user, por lo que el usuario queda como NULL
     TrazaEnvio.objects.create(
         envio=envio,
         usuario=None,
@@ -417,6 +454,10 @@ def chatbot_response(request):
             return JsonResponse({'error': 'Pregunta no proporcionada en el cuerpo de la solicitud (prompt).'}, status=400)
 
         # 2. Configurar el cliente de Gemini
+        # Asegúrate de que settings.GEMINI_API_KEY esté configurada
+        if not hasattr(settings, 'GEMINI_API_KEY') or not settings.GEMINI_API_KEY:
+             return JsonResponse({'error': 'La clave GEMINI_API_KEY no está configurada.'}, status=500)
+             
         client = genai.Client(api_key=settings.GEMINI_API_KEY)
         
         # INSTRUCCIÓN DE SISTEMA (OPTIMIZACIÓN)
@@ -452,4 +493,4 @@ def chatbot_response(request):
         error_message = f'Error interno del chatbot. Asegúrate que la clave API es correcta y que tienes conexión. Detalle: {str(e)}'
         print(f"Error de Gemini API: {e}")
         return JsonResponse({'success': False, 'error': error_message}, status=500)
-    
+        

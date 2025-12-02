@@ -188,3 +188,9 @@ DEFAULT_DOMAIN = "172.30.3.122:8000"
 # SITE ID
 # --------------------------------------------------
 SITE_ID = 1
+
+
+# --------------------------------------------------
+# CLAVE DE GEMINI API (ADICIÓN PARA CHATBOT)
+# --------------------------------------------------
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'TU_CLAVE_GEMINI_AQUI_REEMPLAZAME')

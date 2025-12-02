@@ -17,8 +17,8 @@ import os
 import qrcode
 from google import genai 
 
-# Importamos el nuevo modelo TrazaEnvio
-from .models import Envio, SoporteTicket, SoporteRespuesta, TrazaEnvio 
+# Importamos los nuevos modelos Zona y Tarifa
+from .models import Envio, SoporteTicket, SoporteRespuesta, TrazaEnvio, Zona, Tarifa 
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 # -------------------------------
@@ -115,6 +115,86 @@ def superadmin_panel(request):
         'envios': envios,
         'tickets': tickets
     })
+
+# -------------------------------
+# LÓGICA DE COTIZACIÓN (NUEVO)
+# -------------------------------
+
+def calcular_peso_volumetrico(largo, ancho, alto, factor_divisor=5000):
+    """Calcula el peso volumétrico en kilogramos. Retorna 0.0 si hay error."""
+    try:
+        # Asegurarse de que los inputs sean floats y positivos
+        largo = float(largo)
+        ancho = float(ancho)
+        alto = float(alto)
+        factor_divisor = int(factor_divisor)
+        
+        if largo <= 0 or ancho <= 0 or alto <= 0 or factor_divisor <= 0:
+            return 0.0
+            
+        volumen = largo * ancho * alto
+        return volumen / factor_divisor
+    except (TypeError, ValueError, ZeroDivisionError):
+        return 0.0
+
+
+@csrf_exempt
+def cotizar_envio(request):
+    """
+    Recibe los datos del envío por POST y calcula el costo basado en Tarifa y Peso Volumétrico.
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            
+            # 1. Obtener y validar datos de entrada
+            origen_nombre = data.get('origen')
+            destino_nombre = data.get('destino')
+            peso_real = float(data.get('peso', 0))
+            largo = float(data.get('largo', 0))
+            ancho = float(data.get('ancho', 0))
+            alto = float(data.get('alto', 0))
+            
+            if not origen_nombre or not destino_nombre:
+                return JsonResponse({'success': False, 'error': 'Origen y Destino son obligatorios.'}, status=400)
+            
+            # 2. Buscar Zonas y Tarifa
+            zona_origen = Zona.objects.get(nombre__iexact=origen_nombre)
+            zona_destino = Zona.objects.get(nombre__iexact=destino_nombre)
+            tarifa = Tarifa.objects.get(origen=zona_origen, destino=zona_destino)
+            
+            # 3. Calcular Peso Volumétrico y peso a cobrar
+            peso_vol = calcular_peso_volumetrico(largo, ancho, alto, tarifa.factor_volumetrico)
+            peso_a_cobrar = max(peso_real, peso_vol)
+            
+            # 4. Cálculo del Costo
+            costo_total = float(tarifa.costo_base)
+            
+            if peso_a_cobrar > float(tarifa.limite_peso_kg):
+                exceso_peso = peso_a_cobrar - float(tarifa.limite_peso_kg)
+                costo_total += exceso_peso * float(tarifa.costo_por_kg_extra)
+            
+            return JsonResponse({
+                'success': True,
+                'costo': round(costo_total, 2),
+                'peso_cobrado': round(peso_a_cobrar, 2),
+                'peso_volumetrico': round(peso_vol, 2),
+                'moneda': 'COP' 
+            })
+
+        except Zona.DoesNotExist:
+            return JsonResponse({'success': False, 'error': f'Zona "{origen_nombre}" u "{destino_nombre}" no definida en el sistema.'}, status=404)
+        except Tarifa.DoesNotExist:
+            return JsonResponse({'success': False, 'error': f'No hay tarifa definida entre {origen_nombre} y {destino_nombre}.'}, status=404)
+        except (ValueError, TypeError):
+             return JsonResponse({'success': False, 'error': 'Datos de peso/dimensiones inválidos. Asegúrate de usar números.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': f'Error interno del servidor: {str(e)}'}, status=500)
+    
+    # GET: Si se accede por GET, renderiza un formulario de cotización
+    zonas = Zona.objects.all().values_list('nombre', flat=True)
+    return render(request, 'cotizar.html', {'zonas': list(zonas)})
+
 
 # -------------------------------
 # CREAR ENVÍO
@@ -372,4 +452,4 @@ def chatbot_response(request):
         error_message = f'Error interno del chatbot. Asegúrate que la clave API es correcta y que tienes conexión. Detalle: {str(e)}'
         print(f"Error de Gemini API: {e}")
         return JsonResponse({'success': False, 'error': error_message}, status=500)
-        
+    

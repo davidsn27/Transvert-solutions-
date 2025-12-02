@@ -24,8 +24,11 @@ urlpatterns = [
     path('api/crear-envio/', views.crear_envio_api, name='crear_envio_api'),
     path('seguimiento/', views.seguimiento_envio, name='seguimiento_envio'),
     path('actualizar_estado_envio/', views.actualizar_estado_envio, name='actualizar_estado_envio'),
+    
+    # COTIZACIÓN (NUEVA RUTA)
+    path('cotizar/', views.cotizar_envio, name='cotizar_envio'), 
 
-    # API del Chatbot (NUEVA URL)
+    # API del Chatbot
     path('api/chatbot/', views.chatbot_response, name='chatbot_response'),
 
     # PDF / Guías
@@ -36,9 +39,9 @@ urlpatterns = [
 
     # Administración de tickets
     path('admin/tickets/', views.ver_tickets_admin, name='ver_tickets_admin'),
-    # urls.py
     path('tickets/responder/<int:id>/', views.responder_ticket, name='responder_ticket'),
 
+    # Restauración de Contraseña
     path(
         'password_reset/',
         auth_views.PasswordResetView.as_view(

@@ -82,7 +82,7 @@ class Envio(models.Model):
     )
 
     numero_guia = models.CharField(max_length=20, unique=True)
-
+    
     # Remitente
     remitente_nombre = models.CharField(max_length=100)
     remitente_telefono = models.CharField(max_length=20)
@@ -147,3 +147,42 @@ class TrazaEnvio(models.Model):
     def __str__(self):
         return f'{self.envio.numero_guia} - {self.estado_nuevo} en {self.ubicacion}'
         
+
+# -------------------------------
+# NUEVO MODELO: ZONA (O CIUDAD)
+# -------------------------------
+class Zona(models.Model):
+    # Se usa para definir los puntos de origen y destino de las tarifas
+    nombre = models.CharField(max_length=100, unique=True)
+    
+    def __str__(self):
+        return self.nombre
+    
+    class Meta:
+        verbose_name = "Zona/Ciudad"
+        verbose_name_plural = "Zonas/Ciudades"
+
+
+# -------------------------------
+# NUEVO MODELO: TARIFA
+# -------------------------------
+class Tarifa(models.Model):
+    # La tarifa se define entre un par de zonas/ciudades
+    origen = models.ForeignKey(Zona, on_delete=models.CASCADE, related_name='tarifas_origen')
+    destino = models.ForeignKey(Zona, on_delete=models.CASCADE, related_name='tarifas_destino')
+    
+    # Parámetros para el cálculo de costos
+    factor_volumetrico = models.IntegerField(default=5000, help_text="Divisor para Peso Volumétrico (L*A*H / Factor)") 
+    costo_base = models.DecimalField(max_digits=10, decimal_places=2)
+    limite_peso_kg = models.DecimalField(max_digits=10, decimal_places=2, default=5.0, help_text="Peso que cubre el costo base")
+    costo_por_kg_extra = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    class Meta:
+        # Esto asegura que no haya dos tarifas iguales (ej: Bogotá-Medellín dos veces)
+        unique_together = ('origen', 'destino') 
+        verbose_name = "Tarifa de Envío"
+        verbose_name_plural = "Tarifas de Envío"
+
+    def __str__(self):
+        return f'Tarifa de {self.origen} a {self.destino}'
+    

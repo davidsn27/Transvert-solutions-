@@ -12,7 +12,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --------------------------------------------------
 SECRET_KEY = 'django-insecure-tu_clave_secreta'
 DEBUG = True
-ALLOWED_HOSTS = ['*']
+# MANTENIDO: Clave para que el servidor sea accesible en la red local (portabilidad)
+ALLOWED_HOSTS = ['*'] 
 
 
 # --------------------------------------------------
@@ -167,11 +168,14 @@ CORS_ALLOWED_ORIGINS = [
 # --------------------------------------------------
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+
+# MODIFICACIÓN CRUCIAL PARA MAYOR ESTABILIDAD CON GMAIL
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
 
 EMAIL_HOST_USER = "transvert.solutions.enterprice@gmail.com"
-EMAIL_HOST_PASSWORD = "ecbybutztbvmvzcz"
+EMAIL_HOST_PASSWORD = "ecbybutztbvmvzcz" # Asegúrate de que esta es una Contraseña de Aplicación
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
@@ -181,6 +185,7 @@ PASSWORD_RESET_TIMEOUT = 900
 # --------------------------------------------------
 # DOMINIO PARA ENLACES DE CORREO
 # --------------------------------------------------
+# IMPORTANTE: Reemplaza esta IP con la IP LOCAL REAL de tu PC antes de enviar el correo.
 DEFAULT_DOMAIN = "172.30.3.122:8000"
 
 

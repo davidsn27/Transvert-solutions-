@@ -8,12 +8,15 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+from django.conf import settings # NUEVO: Importamos settings
 
 import uuid
 import json
 import tempfile
 import os
 import qrcode
+# NUEVO: Importamos el cliente de Gemini
+from google import genai 
 
 from reportlab.lib.pagesizes import A6
 from reportlab.pdfgen import canvas
@@ -260,3 +263,48 @@ def crear_envio_api(request):
         direccion_destino=data.get('direccion_destino'),
     )
     return JsonResponse({'success': True, 'numero_guia': envio.numero_guia})
+
+
+# -------------------------------
+# CHATBOT GEMINI (NUEVA FUNCIÓN)
+# -------------------------------
+@csrf_exempt
+def chatbot_response(request):
+    """
+    Maneja la solicitud del usuario, llama a la API de Gemini y devuelve la respuesta.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido. Solo se acepta POST.'}, status=405)
+
+    try:
+        # 1. Obtener el prompt/pregunta del usuario
+        data = json.loads(request.body.decode('utf-8'))
+        prompt = data.get('prompt')
+
+        if not prompt:
+            return JsonResponse({'error': 'Pregunta no proporcionada en el cuerpo de la solicitud (prompt).'}, status=400)
+
+        # 2. Configurar el cliente de Gemini
+        # La clave es cargada desde settings.py
+        client = genai.Client(api_key=settings.GEMINI_API_KEY)
+
+        # 3. Llamar a la API de Gemini
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        # 4. Devolver la respuesta en formato JSON
+        return JsonResponse({
+            'success': True,
+            'response': response.text
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Formato JSON inválido en el cuerpo de la solicitud.'}, status=400)
+    except Exception as e:
+        # Manejar errores de la API, red, etc.
+        error_message = f'Error interno del chatbot. Asegúrate que la clave API es correcta y que tienes conexión. Detalle: {str(e)}'
+        print(f"Error de Gemini API: {e}")
+        return JsonResponse({'success': False, 'error': error_message}, status=500)
+        

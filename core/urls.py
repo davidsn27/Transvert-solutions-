@@ -18,6 +18,7 @@ urlpatterns = [
     # Paneles
     path('staff_panel/', views.staff_panel, name='staff_panel'),
     path('superadmin_panel/', views.superadmin_panel, name='superadmin_panel'),
+    path('panel-cliente/', views.client_dashboard, name='client_dashboard'), # <<<< NUEVA RUTA DE CLIENTE
 
     # Envíos
     path('crear-envio/', views.crear_envio, name='crear_envio'),
@@ -25,7 +26,7 @@ urlpatterns = [
     path('seguimiento/', views.seguimiento_envio, name='seguimiento_envio'),
     path('actualizar_estado_envio/', views.actualizar_estado_envio, name='actualizar_estado_envio'),
     
-    # COTIZACIÓN (NUEVA RUTA)
+    # COTIZACIÓN
     path('cotizar/', views.cotizar_envio, name='cotizar_envio'), 
 
     # API del Chatbot

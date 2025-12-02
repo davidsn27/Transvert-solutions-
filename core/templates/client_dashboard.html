@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Cliente | Transvert Solutions</title>
+
+    <style>
+        /* --- ESTILOS COMPARTIDOS DEL PROYECTO --- */
+        .corporate-header {
+            background: #111827;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        
+        body { background-color: #f8f9fa; } /* Fondo más claro para el contenido principal */
+
+        /* Estilos del menú de usuario */
+        .user-menu-container {
+            position: absolute;
+            top: 32px;
+            right: 30px;
+            z-index: 1000;
+        }
+        
+        .user-btn {
+            background: #1f2937;
+            color: white;
+            padding: 14px 26px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid #4b5563;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            margin-top: 12px;
+            background: #1f2937;
+            padding: 18px;
+            border-radius: 12px;
+            width: 260px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+            z-index: 1000;
+        }
+        
+        .user-dropdown a {
+            display: block;
+            padding: 14px;
+            color: white;
+            border-bottom: 1px solid #374151;
+            text-decoration: none;
+            font-size: 17px;
+        }
+        
+        .user-dropdown a:hover {
+            background: #374151;
+        }
+        
+        .user-dropdown.show {
+            display: block;
+        }
+
+        /* Estilos específicos del Dashboard */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        
+        .section-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            margin-bottom: 35px;
+        }
+        
+        .section-header {
+            background: #1e3a8a; /* Azul corporativo */
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px 10px 0 0;
+            margin: -30px -30px 20px -30px; /* Margen negativo para cubrir el card */
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Estilos de tabla simples para Bootstrap */
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .table {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: #212529;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        .btn-action {
+            background-color: #3b82f6;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+        .btn-action:hover {
+            background-color: #2563eb;
+        }
+        
+        .badge-status {
+            display: inline-block;
+            padding: 0.35em 0.65em;
+            font-size: 0.85em;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+            background-color: #6c757d; /* Gris secundario */
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    {% csrf_token %}
+
+    <div class="user-menu-container">
+        {% if user.is_authenticated %}
+            <button class="user-btn" onclick="toggleUserMenu()">👤 {{ user.username }}</button>
+
+            <div class="user-dropdown" id="userDropdown">
+                <a href="{% url 'client_dashboard' %}">📊 Mi Panel</a>
+                <a href="{% url 'crear_envio' %}">🚚 Crear Envío</a>
+                <a href="{% url 'seguimiento_envio' %}">📦 Seguimiento</a>
+                <a href="/soporte/">🛠 Soporte Técnico</a>
+                <a href="{% url 'logout' %}">🚪 Cerrar Sesión</a>
+            </div>
+
+        {% else %}
+            <button class="user-btn" onclick="toggleUserMenu()">☰ Menú</button>
+            <div class="user-dropdown" id="userDropdown">
+                <a href="{% url 'seguimiento_envio' %}">📦 Seguimiento</a>
+                <a href="{% url 'register' %}">📝 Registrarse</a>
+                <a href="{% url 'login' %}">🔐 Iniciar Sesión</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="corporate-header">
+        Panel de Cliente
+    </div>
+
+    <div class="dashboard-container">
+        <h1 style="color: #1e3a8a; margin-bottom: 30px;">👋 Bienvenido, {{ user.username }}</h1>
+
+        <div class="section-card">
+            <div class="section-header">📦 Mis Envíos ({{ envios.count }})</div>
+            {% if envios %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Guía</th>
+                            <th>Estado</th>
+                            <th>Destino</th>
+                            <th>Fecha Creación</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for envio in envios %}
+                        <tr>
+                            <td>{{ envio.numero_guia }}</td>
+                            <td><span class="badge-status">{{ envio.estado }}</span></td>
+                            <td>{{ envio.direccion_destino }}</td>
+                            <td>{{ envio.fecha_creado|date:"d M Y" }}</td>
+                            <td><a href="{% url 'seguimiento_envio' %}?numero_guia={{ envio.numero_guia }}" class="btn-action">Ver Traza</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p style="color: #7f1d1d; background: #fee2e2; padding: 15px; border-radius: 8px;">Aún no has creado ningún envío con esta cuenta.</p>
+            {% endif %}
+        </div>
+
+        <div class="section-card">
+            <div class="section-header" style="background: #f59e0b;">💬 Mis Tickets de Soporte ({{ tickets.count }})</div>
+            {% if tickets %}
+            <ul style="list-style: none; padding: 0;">
+                {% for ticket in tickets %}
+                <li style="padding: 12px; margin-bottom: 8px; border: 1px solid #d1d5db; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    #{{ ticket.id }} - <strong>{{ ticket.asunto }}</strong>
+                    <span class="badge-status" style="background-color: #059669;">{{ ticket.estado }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p style="color: #1f2937; background: #eff6ff; padding: 15px; border-radius: 8px;">No tienes tickets de soporte activos.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <script>
+        function toggleUserMenu() {
+            document.getElementById("userDropdown").classList.toggle("show");
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-btn')) {
+                var dropdown = document.getElementById("userDropdown");
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

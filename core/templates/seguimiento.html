@@ -6,10 +6,10 @@
     <title>Seguimiento de Envío - Transvert Solutions</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- ✅ FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
+        /* [ESTILOS EXISTENTES] */
         .main-wrapper {
             display: flex;
             min-height: 100vh;
@@ -119,6 +119,65 @@
             font-weight: bold;
             color: #003a70;
         }
+        
+        /* [NUEVOS ESTILOS PARA LA TRAZABILIDAD] */
+        .tracking-timeline {
+            margin-top: 30px;
+            padding-left: 25px; /* Espacio para la línea */
+            border-left: 3px solid #007ACC;
+            position: relative;
+        }
+        
+        .tracking-event {
+            position: relative;
+            padding: 15px 15px 15px 25px;
+            background: #ffffff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .tracking-event::before {
+            content: '';
+            position: absolute;
+            left: -33px; /* Alinea con la línea */
+            top: 20px;
+            width: 15px;
+            height: 15px;
+            background: #0095FF;
+            border: 3px solid #007ACC;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .tracking-event.final::before {
+            background: #28a745; /* Color verde para el evento final */
+            border-color: #1e7e34;
+        }
+        
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            color: #003a70;
+            margin-bottom: 5px;
+        }
+
+        .event-status {
+            font-size: 1.1em;
+        }
+
+        .event-date {
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .event-location {
+            font-style: italic;
+            color: #777;
+            margin-top: 5px;
+        }
+        
     </style>
 </head>
 
@@ -126,7 +185,6 @@
 
 <div class="main-wrapper">
 
-    <!-- ✅ SIDEBAR -->
     <div class="sidebar">
         <h3>Transvert</h3>
 
@@ -149,7 +207,6 @@
         {% endif %}
     </div>
 
-    <!-- ✅ CONTENIDO -->
     <div class="main-content">
         <div class="card">
 
@@ -175,19 +232,42 @@
                     <tr><th>Dimensiones</th><td>{{ envio.dimensiones }}</td></tr>
                     <tr><th>Origen</th><td>{{ envio.direccion_origen }}</td></tr>
                     <tr><th>Destino</th><td>{{ envio.direccion_destino }}</td></tr>
-                    <tr><th>Estado</th><td>{{ envio.estado }}</td></tr>
+                    <tr><th>Estado Actual</th><td><b>{{ envio.estado }}</b></td></tr>
                 </table>
 
-                <!-- ✅ DESCARGA DE ETIQUETA SOLO SI EXISTE -->
+                <h2 style="margin-top: 40px;"><i class="fas fa-list-ul"></i> Historial de Movimientos</h2>
+
+                {% if trazas %}
+                    <div class="tracking-timeline">
+                        {% for traza in trazas reversed %}
+                            <div class="tracking-event {% if forloop.first %}final{% endif %}">
+                                <div class="event-header">
+                                    <span class="event-status">{{ traza.estado_nuevo }}</span>
+                                    <span class="event-date">{{ traza.fecha_hora|date:"d M Y H:i" }}</span>
+                                </div>
+                                <p>{{ traza.descripcion }}</p>
+                                <p class="event-location"><i class="fas fa-map-marker-alt"></i> {{ traza.ubicacion }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: #555;">No se encontró historial de movimientos para esta guía.</p>
+                {% endif %}
+
+
                 {% if envio %}
                 <a href="{% url 'descargar_guia_pdf' envio.id %}" 
-                   style="margin-top:12px;display:inline-block;padding:12px 18px;
+                   style="margin-top:25px;display:inline-block;padding:12px 18px;
                           background:#28a745;color:white;border-radius:8px;
                           font-weight:bold;text-decoration:none;">
                    📄 Descargar etiqueta en PDF
                 </a>
                 {% endif %}
                 
+
+            {% elif error %}
+                 <h2 style="color: #cc0000; margin-top: 20px;">Error:</h2>
+                 <p style="font-size: 1.1em; color: #cc0000;">{{ error }}</p>
 
             {% endif %}
 

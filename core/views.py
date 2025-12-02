@@ -8,20 +8,17 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
-from django.conf import settings # NUEVO: Importamos settings
+from django.conf import settings 
 
 import uuid
 import json
 import tempfile
 import os
 import qrcode
-# NUEVO: Importamos el cliente de Gemini
 from google import genai 
 
-from reportlab.lib.pagesizes import A6
-from reportlab.pdfgen import canvas
-
-from .models import Envio, SoporteTicket, SoporteRespuesta
+# Importamos el nuevo modelo TrazaEnvio
+from .models import Envio, SoporteTicket, SoporteRespuesta, TrazaEnvio 
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 # -------------------------------
@@ -126,7 +123,9 @@ def superadmin_panel(request):
 def crear_envio(request):
     if request.method == 'POST':
         numero_guia = "G-" + uuid.uuid4().hex[:10].upper()
-        Envio.objects.create(
+        
+        # 1. Crear el envío
+        envio = Envio.objects.create(
             numero_guia=numero_guia,
             remitente_nombre=request.POST.get("remitente_nombre"),
             remitente_telefono=request.POST.get("remitente_telefono"),
@@ -139,23 +138,40 @@ def crear_envio(request):
             dimensiones=request.POST.get("dimensiones") or "",
             direccion_origen=request.POST.get("direccion_origen"),
             direccion_destino=request.POST.get("direccion_destino"),
+            estado='Creado' # Asegurar que el estado inicial sea 'Creado'
         )
+        
+        # 2. Crear la primera traza de historial
+        TrazaEnvio.objects.create(
+            envio=envio,
+            usuario=request.user, # Asume que el usuario autenticado crea el envío
+            estado_anterior=None,
+            estado_nuevo='Creado',
+            descripcion='Envío creado por el usuario en el sistema.',
+            ubicacion=envio.direccion_origen
+        )
+
         messages.success(request, f"Envío creado: {numero_guia}")
         return redirect("crear_envio")
     return render(request, "crear_envio.html")
 
 # -------------------------------
-# SEGUIMIENTO
+# SEGUIMIENTO (MODIFICADA)
 # -------------------------------
 def seguimiento_envio(request):
     envio = None
+    trazas = None # AÑADIDO: Variable para el historial
     error = None
     if 'numero_guia' in request.GET:
         try:
             envio = Envio.objects.get(numero_guia=request.GET.get('numero_guia'))
+            # OBTENER EL HISTORIAL ORDENADO POR FECHA
+            trazas = envio.trazas.all() 
         except Envio.DoesNotExist:
             error = "No se encontró un envío."
-    return render(request, "seguimiento.html", {"envio": envio, "error": error})
+            
+    # PASAMOS EL HISTORIAL A LA PLANTILLA
+    return render(request, "seguimiento.html", {"envio": envio, "trazas": trazas, "error": error})
 
 # -------------------------------
 # SOPORTE
@@ -206,17 +222,37 @@ def responder_ticket(request, id):
     return redirect('staff_panel')
 
 # -------------------------------
-# ACTUALIZAR ESTADO ENVÍO
+# ACTUALIZAR ESTADO ENVÍO (MODIFICADA)
 # -------------------------------
 @login_required
 def actualizar_estado_envio(request):
     if request.method == 'POST':
         envio_id = request.POST.get("envio_id")
         nuevo_estado = request.POST.get("nuevo_estado")
+        
+        # Nuevos campos que deben venir del formulario de Staff
+        ubicacion = request.POST.get("ubicacion", "Centro de Distribución") 
+        detalle = request.POST.get("detalle", f"Estado actualizado a {nuevo_estado}.") 
+        
         envio = get_object_or_404(Envio, id=envio_id)
+        
+        estado_anterior = envio.estado # Guardamos el estado actual
+        
+        # 1. Crear el registro de Trazabilidad
+        TrazaEnvio.objects.create(
+            envio=envio,
+            usuario=request.user,
+            estado_anterior=estado_anterior,
+            estado_nuevo=nuevo_estado,
+            descripcion=detalle,
+            ubicacion=ubicacion 
+        )
+
+        # 2. Actualizar el estado principal del Envío
         envio.estado = nuevo_estado
         envio.save()
-        messages.success(request, f"Estado de {envio.numero_guia} actualizado a {nuevo_estado}")
+        
+        messages.success(request, f"Estado de {envio.numero_guia} actualizado a {nuevo_estado} y traza registrada.")
     return redirect('staff_panel')
 
 # -------------------------------
@@ -248,6 +284,8 @@ def descargar_guia_pdf(request, envio_id):
 def crear_envio_api(request):
     data = json.loads(request.body.decode('utf-8'))
     numero_guia = "G-" + uuid.uuid4().hex[:10].upper()
+    
+    # 1. Crear el envío
     envio = Envio.objects.create(
         numero_guia=numero_guia,
         remitente_nombre=data.get('remitente_nombre'),
@@ -261,17 +299,31 @@ def crear_envio_api(request):
         dimensiones=data.get('dimensiones', ''),
         direccion_origen=data.get('direccion_origen'),
         direccion_destino=data.get('direccion_destino'),
+        estado='Creado' # Estado inicial
     )
+    
+    # 2. Crear la primera traza de historial (simulando que la API la crea)
+    # Nota: Aquí no hay request.user, por lo que el usuario queda como NULL
+    TrazaEnvio.objects.create(
+        envio=envio,
+        usuario=None,
+        estado_anterior=None,
+        estado_nuevo='Creado',
+        descripcion='Envío creado automáticamente vía API.',
+        ubicacion=envio.direccion_origen
+    )
+    
     return JsonResponse({'success': True, 'numero_guia': envio.numero_guia})
 
 
 # -------------------------------
-# CHATBOT GEMINI (NUEVA FUNCIÓN)
+# CHATBOT GEMINI (MODIFICADA CON SYSTEM INSTRUCTION)
 # -------------------------------
 @csrf_exempt
 def chatbot_response(request):
     """
-    Maneja la solicitud del usuario, llama a la API de Gemini y devuelve la respuesta.
+    Maneja la solicitud del usuario, llama a la API de Gemini con instrucciones de sistema,
+    y devuelve la respuesta.
     """
     if request.method != 'POST':
         return JsonResponse({'error': 'Método no permitido. Solo se acepta POST.'}, status=405)
@@ -285,13 +337,26 @@ def chatbot_response(request):
             return JsonResponse({'error': 'Pregunta no proporcionada en el cuerpo de la solicitud (prompt).'}, status=400)
 
         # 2. Configurar el cliente de Gemini
-        # La clave es cargada desde settings.py
         client = genai.Client(api_key=settings.GEMINI_API_KEY)
+        
+        # INSTRUCCIÓN DE SISTEMA (OPTIMIZACIÓN)
+        system_instruction = (
+            "Eres el asistente virtual de soporte de la empresa de logística 'Transvert Solutions', "
+            "una empresa colombiana. Tu objetivo es proporcionar información clara, útil y concisa "
+            "sobre envíos, logística, tarifas y la misión/visión de la empresa. "
+            "Utiliza un tono formal pero amigable y profesional. "
+            "Si la pregunta es sobre el rastreo de un número de guía, instruye al usuario a "
+            "usar la función de 'Seguimiento' de la plataforma."
+        )
 
-        # 3. Llamar a la API de Gemini
+
+        # 3. Llamar a la API de Gemini (Añadiendo la configuración)
         response = client.models.generate_content(
             model="gemini-2.5-flash",
-            contents=prompt
+            contents=prompt,
+            config=genai.types.GenerateContentConfig(
+                system_instruction=system_instruction
+            )
         )
 
         # 4. Devolver la respuesta en formato JSON
